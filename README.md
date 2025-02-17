@@ -3,11 +3,11 @@
 ## Course Information
 **Semester/Year:** Spring 2025  
 **Course Code:** COMP 3010  
-**Class Location:** Lecture - C305; Lab - G207  
+**Class Location:** Lecture - C302; Lab - G207  
 
 ### Class Meeting Times:
-- **Lecture:** Tuesdays & Thursdays, 10:30 - 11:45 AM  
-- **Lab:** Mondays, 1:10 - 3:00 PM  
+- **Lecture:** Tuesdays & Thursdays, 9:00 - 10:15 AM  
+- **Lab:** Fridays, 1:10 - 3:00 PM  
 
 ## Instructors and Teaching Assistant (T.A.) Information
 - **Prof. Kok-Seng Wong**  
@@ -37,80 +37,42 @@ This course provides an in-depth exploration of algorithm design and analysis, f
 ### Textbook:
 *Algorithm Design* by Jon Kleinberg and Éva Tardos
 
+
 ## Weekly Schedule
-### Week 1:
-- **Lecture 1:** Course Introduction
-- **Lecture 2:** Stable Matching (Gale-Shapley)
-- **Lab 1:** Implementing the Gale-Shapley Algorithm
 
-### Week 2:
-- **Lecture 3:** Basics of Algorithm Analysis
-- **Lecture 4:** Efficiency of Algorithms
-- **Lab 2:** Runtime and Space Complexity Analysis
+| Week | Lecture Number | Content                                              | Lab                                              |
+|------|----------------|------------------------------------------------------|--------------------------------------------------|
+| 1    | 1              | Course Introduction                                  | -                                                |
+| 1    | 2              | Stable Matching (Gale-Shapley)                       | Implementing the Gale-Shapley Algorithm          |
+| 2    | 3              | Algorithms Analysis                                  | Runtime and Space Complexity Analysis           |
+| 2    | 4              | Run-time Analysis of Algorithms                      | Solve problems with different approaches        |
+| 3    | 5              | Introduction to Graphs                               | Implement BFS and DFS                           |
+| 3    | 6              | Graph Traversals (BFS, DFS)                          | Apply BFS and DFS to graph problems             |
+| 4    | 7              | Greedy Algorithms I                                  | Implement Interval Scheduling and Optimal Caching|
+| 4    | 8              | Optimal Caching                                      | -                                                |
+| 5    | 9              | Minimum Spanning Trees                               | Implement Kruskal's and Prim's algorithms       |
+| 5    | 10             | Greedy Algorithms II (Huffman Codes)                 | -                                                |
+| 6    | 11             | Divide-and-Conquer I                                 | Implement Merge Sort and Binary Search          |
+| 6    | 12             | Sorting and Searching                                | Solve sorting and searching problems            |
+| 7    | 13             | Divide-and-Conquer II (Integer Multiplication)       | Implement advanced divide-and-conquer problems  |
+| 7    | 14             | Advanced Divide-and-Conquer                          | Solve Nearest Neighbor and Karatsuba Algorithm |
+| 8    | -              | Midterm Exam                                         | -                                                |
+| 9    | 15             | Dynamic Programming I                                | Implement Weighted Interval Scheduling          |
+| 9    | 16             | Segmented Least Squares                              | Solve dynamic programming problems              |
+| 10   | 17             | Dynamic Programming II (Subset Sums, Knapsacks)      | Implement Knapsack Problem and Sequence Alignment|
+| 10   | 18             | Sequence Alignment                                   | Solve advanced dynamic programming problems     |
+| 11   | 19             | Network Flow (Max-flow Problem, Ford-Fulkerson)       | Implement Max-flow Algorithms                   |
+| 11   | 20             | Network Flow Problems                                | Solve Network Flow Problems using Ford-Fulkerson|
+| 12   | 21             | Polynomial-time Reductions (Intractability I)        | Solve NP-complete problems (e.g., 3-SAT)       |
+| 12   | 22             | Constraint Satisfaction Problems                     | -                                                |
+| 13   | 23             | Intractability II (P-NP, NP-complete, co-NP, NP-hard)| -                                                |
+| 13   | 24             | Asymmetry of NP                                     | Solve NP-hard problems                          |
+| 14   | 25             | Approximation Algorithms                             | Implement Approximation Algorithms              |
+| 14   | 26             | Local Search                                         | Apply local search heuristics to optimization problems|
+| 15   | 27             | Randomized Algorithms I                              | Solve Randomized Algorithms Problems            |
+| 15   | 28             | Randomized Algorithms II                             | Solve advanced randomized algorithms            |
+| 16   | -              | Final Exam                                           | -                                                |
 
-### Week 3:
-- **Lecture 5:** Introduction to Graphs
-- **Lecture 6:** Graph Traversal Methods (BFS, DFS)
-- **Lab 3:** BFS and DFS Implementation
-
-### Week 4:
-- **Lecture 7:** Greedy Algorithm Overview
-- **Lecture 8:** Interval Scheduling and Optimal Caching
-- **Lab 4:** Solving Problems Using Greedy Paradigm
-
-### Week 5:
-- **Lecture 9:** Minimum Spanning Trees
-- **Lecture 10:** Approximation Solutions (Integer Knapsack)
-- **Lab 5:** Kruskal's and Prim's Algorithms
-
-### Week 6:
-- **Lecture 11:** Divide and Conquer I
-- **Lecture 12:** Sorting and Searching (Merge Sort, Binary Search)
-- **Lab 6:** Implementing Merge Sort and Binary Search
-
-### Week 7:
-- **Lecture 13:** Divide and Conquer II (Integer Multiplication, Nearest Neighbor)
-- **Lecture 14:** Run-time Analysis
-- **Lab 7:** Advanced Divide and Conquer
-
-### Week 8:
-- **Midterm Exam**
-
-### Week 9:
-- **Lecture 15:** Dynamic Programming I (Principles of DP)
-- **Lecture 16:** Weighted Interval Scheduling, Segmented Least Squares
-- **Lab 8:** Solving Basic DP Problems
-
-### Week 10:
-- **Lecture 17:** Dynamic Programming II (Subset Sums, Knapsacks)
-- **Lecture 18:** Sequence Alignment, Shortest Path
-- **Lab 9:** Advanced DP Problems
-
-### Week 11:
-- **Lecture 19:** Network Flow (Max-flow Problem, Ford-Fulkerson Algorithm)
-- **Lab 10:** Implementing Max-flow Algorithms
-
-### Week 12:
-- **Lecture 21:** Intractability I (Polynomial-time Reductions)
-- **Lecture 22:** Constraint Satisfaction Problems
-- **Lab 11:** NP Problems and Polynomial-time Reductions
-
-### Week 13:
-- **Lecture 23:** Intractability II (P-NP, NP-complete, co-NP, NP-hard)
-- **Lab 12:** Discussion on NP-complete Problems
-
-### Week 14:
-- **Lecture 25:** Approximation Algorithms (Load Balancing, LP Rounding)
-- **Lecture 26:** Local Search Heuristics
-- **Lab 13:** Approximation and Local Search Techniques
-
-### Week 15:
-- **Lecture 27:** Randomized Algorithms I (Contention Resolution, Global Min Cut)
-- **Lecture 28:** Randomized Algorithms II (Universal Hashing, Chernoff Bounds)
-- **Lab 14:** Randomized Algorithms Implementation
-
-### Week 16:
-- **Final Exam**
 
 ## Lab/Homework Assignments
 Weekly labs and homework are designed to reinforce lecture concepts through practical coding and algorithm analysis. Detailed instructions will be provided during each lab session.

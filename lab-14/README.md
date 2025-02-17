@@ -72,7 +72,7 @@ print("Sorted array:", arr)
 
 ### Task 2: Randomized Selection
 #### Objective
-Find the \( k \)-th smallest element in an unsorted array using a randomized approach.
+Find the $k$-th smallest element in an unsorted array using a randomized approach.
 
 #### Algorithm
 1. Choose a random pivot.
@@ -140,7 +140,7 @@ print("Minimum cut:", karger_min_cut(graph))
 ---
 
 ## Additional Exercises
-1. Implement a Monte Carlo algorithm to estimate \( \pi \) using random sampling.
+1. Implement a Monte Carlo algorithm to estimate $\pi$ using random sampling.
 2. Write a program to simulate randomized load balancing in a distributed system.
 3. Extend Karger's algorithm to run multiple trials and return the smallest cut.
 
