@@ -47,84 +47,133 @@ By the end of this lab, you should be able to:
 
 ---
 
-## Task 1: Setup and Warm-Up
-1. Open the `gale_shapley.py` file.
-2. Read the comments and understand the structure of the code template.
-3. Implement a function `read_preferences(filename)` to read preferences from the `preferences_input.txt` file. The format is:
+# The Stable Matching Problem
+
+## Overview
+This module covers:
+1. **Definition of the Stable Matching Problem**.
+2. **Gale-Shapley Algorithm** for finding a **stable matching**.
+3. **Proof of Stability & Properties**.
+4. **Applications in real-world scenarios**.
+
+---
+
+# 1. **Stable Matching Problem**
+
+### **Problem Statement**
+We are given two equal-sized sets:
+- **n men** and **n women**.
+- Each person ranks all members of the opposite group **in order of preference**.
+
+📌 **Goal**: Find a **stable matching**, where no two people prefer each other over their assigned partners.
+
+### **Example**
+Consider **3 men** and **3 women**:
+
+| Man  | Preferences       | Woman | Preferences       |
+|------|------------------|-------|------------------|
+| A    | X > Y > Z        | X     | B > A > C        |
+| B    | Y > X > Z        | Y     | C > A > B        |
+| C    | Z > X > Y        | Z     | A > C > B        |
+
+### **What is Stability?**
+A matching is **unstable** if:
+- A man **M** and a woman **W** prefer each other over their assigned partners.
+
+📌 **Example of an Unstable Pair**:
+- Suppose **A is matched with Z** and **B is matched with X**.
+- If **A prefers X over Z** and **X prefers A over B**, this creates an **unstable pair**.
+
+📌 **Goal**: Find a matching where **no unstable pairs exist**.
+
+---
+
+# 2. **Gale-Shapley Algorithm (Deferred Acceptance)**
+
+### **Idea**
+Men propose to women in rounds, and women **tentatively accept** the best option.
+
+### **Pseudocode**
+```
+GaleShapley(menPreferences, womenPreferences):
+    while there is an unengaged man:
+        m proposes to his favorite woman w who hasn't rejected him
+        if w is free:
+            match (m, w)
+        else:
+            if w prefers m over her current partner m':
+                match (m, w)
+                unengage(m')
+            else:
+                w rejects m
+```
+📌 **Time Complexity**: **O(n²)**  
+📌 **Space Complexity**: **O(n)**  
+
+### **Step-by-Step Example**
+#### **Input**
+Men’s preferences:
+```
+A: X > Y > Z
+B: Y > X > Z
+C: Z > X > Y
+```
+Women’s preferences:
+```
+X: B > A > C
+Y: C > A > B
+Z: A > C > B
+```
+
+#### **Execution**
+1. **Round 1**:  
+   - **A proposes to X** (X tentatively accepts A).  
+   - **B proposes to Y** (Y tentatively accepts B).  
+   - **C proposes to Z** (Z tentatively accepts C).
+
+2. **Round 2**:  
+   - **A gets rejected by X (since X prefers B)**.
+   - **A now proposes to Y**.
+   - **Y prefers A over B, so B is rejected**.
+   - **B now proposes to X again**.
+
+3. **Final Matching**
    ```
-   Group A:
-   A1: B2, B1, B3
-   A2: B1, B2, B3
-   A3: B3, B2, B1
-
-   Group B:
-   B1: A1, A2, A3
-   B2: A3, A2, A1
-   B3: A2, A1, A3
+   A → Y
+   B → X
+   C → Z
    ```
 
 ---
 
-## Task 2: Implement the Gale-Shapley Algorithm
-1. Write the function `gale_shapley(men, women)` that:
-   - Accepts two dictionaries: `men` and `women`, where each key is an individual, and the value is a list of preferences.
-   - Returns a stable matching as a dictionary.
-2. Key steps:
-   - Initialize all members of one group as free.
-   - Iteratively propose matches based on preferences.
-   - Update matchings until all individuals are matched.
+# 3. **Properties of the Gale-Shapley Algorithm**
+✅ **Always finds a stable matching**.  
+✅ **Men-optimal (each man gets the best possible stable match)**.  
+✅ **Women-pessimal (each woman gets the worst stable match for her)**.  
+✅ **Time Complexity: O(n²), Efficient for large inputs**.
+
+📌 **Proof of Stability**
+- If there were an **unstable pair (M, W)**, then W **must have rejected M earlier**, meaning she **already has a better match**.
 
 ---
 
-## Task 3: Testing and Debugging
-1. Use the sample data provided in `preferences_input.txt`.
-2. Verify your implementation by running `gale_shapley.py` with:
-   ```bash
-   python gale_shapley.py
-   ```
-3. Confirm that the output is a stable matching.
+# 4. **Applications of Stable Matching**
+The Stable Matching Problem has real-world applications in:
+1. **College Admissions** → Students & Universities.  
+2. **Residency Matching** → Medical students & hospitals (NRMP).  
+3. **Job Recruitment** → Companies & candidates.  
+4. **Online Dating & Marriage Algorithms**.
 
 ---
 
-## Sample Input and Output
-
-### Input (`preferences_input.txt`):
-```
-Group A:
-A1: B1, B2, B3
-A2: B2, B1, B3
-A3: B3, B1, B2
-
-Group B:
-B1: A1, A2, A3
-B2: A2, A3, A1
-B3: A3, A1, A2
-```
-
-### Expected Output:
-```
-Stable Matching:
-A1 -> B1
-A2 -> B2
-A3 -> B3
-```
+# **Exercises**
+1. Implement the **Gale-Shapley Algorithm**.
+2. Modify the algorithm for **women-proposing** instead of men.
+3. Prove that the Gale-Shapley Algorithm always terminates in **O(n²)** time.
+4. Explore **real-world applications** of stable matching (e.g., NRMP, college admissions).
 
 ---
 
-## Submission Instructions
-1. Save your implementation in `gale_shapley.py`.
-2. Include test cases and outputs in a separate file named `test_results.txt`.
-3. Submit your files on Canvas by the deadline.
-
----
-
-## Additional Resources
-- [Gale-Shapley Algorithm on Wikipedia](https://en.wikipedia.org/wiki/Stable_marriage_problem)
-- Python documentation: [https://docs.python.org/3/](https://docs.python.org/3/)
-
----
-
-## Notes
-- Pay attention to edge cases, such as when preferences are incomplete or cyclic.
-- Ensure your code is well-commented and follows Python best practices.
-- If you have any questions, contact the lab TA during office hours.
+# **Resources**
+- 📖 **Introduction to Algorithms (CLRS)** – Chapter on Stable Matching.
+- 📖 **Algorithm Design – Jon Kleinberg & Éva Tardos**.

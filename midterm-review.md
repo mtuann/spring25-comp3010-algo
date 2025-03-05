@@ -1,180 +1,218 @@
-# Midterm Exam Review: Topics and Preparation Guide
+# Midterm Exam Revision – Algorithm Design Course
 
-## Overview
-This document serves as a comprehensive review guide for the Midterm Exam. The exam covers topics from **Week 1 to Week 7** and includes lectures and lab sessions. Use this guide to structure your revision, identify important concepts, and practice implementations.
-
----
-
-## Topics by Week
-
-### **Week 1: Course Introduction and Stable Matching**
-- **Lecture 1: Course Introduction**:
-  - Overview of the course structure, grading, and expectations.
-  - Introduction to algorithmic problem-solving.
-
-- **Lecture 2: Stable Matching (Gale-Shapley)**:
-  - Problem definition and examples.
-  - Gale-Shapley algorithm:
-    - Algorithm steps.
-    - Properties: Stability and Optimality.
-  - Applications: Matching markets, hospital-resident allocation.
-
-- **Lab 1: Implementing the Gale-Shapley Algorithm**:
-  - Hands-on implementation of the Gale-Shapley algorithm.
-  - Practice problems:
-    - Matching students to universities.
-    - Hospital and resident matching.
+This document provides an overview of key algorithmic topics, including definitions, pseudocode, examples, and applications.
 
 ---
 
-### **Week 2: Basics of Algorithm Analysis**
-- **Lecture 3: Basics of Algorithm Analysis**:
-  - Definitions of algorithms and pseudocode.
-  - Time complexity and asymptotic notation:
-    - Big-O, Big-Theta, and Big-Omega.
-    - Examples with simple algorithms.
+# **1. Basic Definitions & Applications**
+## **Graph Connectivity and Traversal**
+- **Graph Representation**: Adjacency List vs. Adjacency Matrix.
+- **Graph Traversal**: Depth-First Search (DFS) and Breadth-First Search (BFS).
 
-- **Lecture 4: Efficiency of Algorithms**:
-  - Comparison of algorithms based on runtime and space usage.
-  - Analyzing nested loops and recursive algorithms.
+### **Depth-First Search (DFS)**
+```
+DFS(graph, node, visited):
+    mark node as visited
+    for each neighbor in graph[node]:
+        if neighbor is not visited:
+            DFS(graph, neighbor)
+```
+✅ Used in **cycle detection**, **topological sorting**, and **connected components**.
 
-- **Lab 2: Runtime and Space Complexity Analysis**:
-  - Exercises to compute runtime for given code snippets.
-  - Examples of space complexity calculations for recursive functions.
+### **Breadth-First Search (BFS)**
+```
+BFS(graph, start):
+    queue = [start]
+    mark start as visited
+    while queue is not empty:
+        node = queue.pop()
+        for each neighbor in graph[node]:
+            if neighbor is not visited:
+                mark neighbor as visited
+                queue.append(neighbor)
+```
+✅ Used in **shortest paths in unweighted graphs**.
 
----
+## **Testing Bipartiteness**
+- A graph is **bipartite** if it can be colored using **two colors** without adjacent nodes having the same color.
+- BFS can test bipartiteness in **O(V + E)**.
 
-### **Week 3: Graphs and Traversal**
-- **Lecture 5: Introduction to Graphs**:
-  - Definitions: Graph, nodes, edges, directed vs. undirected.
-  - Representations: Adjacency matrix and adjacency list.
-  - Basic graph properties: Degree, connectivity.
-
-- **Lecture 6: Graph Traversal Methods (BFS, DFS)**:
-  - Breadth-First Search (BFS):
-    - Queue-based implementation.
-    - Applications: Shortest path in an unweighted graph.
-  - Depth-First Search (DFS):
-    - Recursive and iterative implementations.
-    - Applications: Detecting cycles, connected components.
-
-- **Lab 3: BFS and DFS Implementation**:
-  - Coding BFS and DFS for undirected and directed graphs.
-  - Practice problems:
-    - Finding the shortest path.
-    - Counting connected components.
-
----
-
-### **Week 4: Greedy Algorithms**
-- **Lecture 7: Greedy Algorithm Overview**:
-  - Characteristics of greedy algorithms.
-  - Proof techniques for correctness:
-    - Greedy-choice property.
-    - Optimal substructure.
-
-- **Lecture 8: Interval Scheduling and Optimal Caching**:
-  - Interval scheduling problem:
-    - Problem definition and solution.
-  - Caching and eviction policies:
-    - Optimal caching strategies.
-
-- **Lab 4: Solving Problems Using Greedy Paradigm**:
-  - Implementation of interval scheduling.
-  - Practice problems:
-    - Coin change problem.
-    - Activity selection problem.
+## **DAGs and Topological Ordering**
+- **Directed Acyclic Graph (DAG)**: A directed graph with no cycles.
+- **Topological Sorting** orders vertices **such that every directed edge (u, v) has u before v**.
+- **Kahn’s Algorithm** (BFS-based) & **DFS-based sorting**.
 
 ---
 
-### **Week 5: Minimum Spanning Trees and Approximation**
-- **Lecture 9: Minimum Spanning Trees**:
-  - Concepts and definitions.
-  - Algorithms:
-    - Kruskal's algorithm.
-    - Prim's algorithm.
+# **2. Greedy Paradigm & Interval Scheduling**
+## **Greedy Algorithm Concept**
+1. **Make the best local choice at each step**.
+2. **Prove correctness via greedy stays ahead, exchange argument, or optimal substructure**.
 
-- **Lecture 10: Approximation Solutions (Integer Knapsack)**:
-  - Integer Knapsack problem:
-    - Greedy approximation methods.
-  - Analysis of approximation ratios.
+## **Interval Scheduling**
+- Given `n` activities `(start, end)`, **maximize the number of non-overlapping activities**.
+- **Greedy Strategy**: Always select the activity that **finishes earliest**.
 
-- **Lab 5: Kruskal's and Prim's Algorithms**:
-  - Implementation of Kruskal's and Prim's MST algorithms.
-  - Practice problems:
-    - Finding MST for weighted graphs.
-    - Comparison of algorithm efficiencies.
+### **Pseudocode for Interval Scheduling**
+```
+sort activities by finish time
+selected = []
+for each activity a:
+    if a does not overlap with last selected:
+        add a to selected
+```
+✅ **O(n log n)** due to sorting.
 
----
-
-### **Week 6: Divide and Conquer Basics**
-- **Lecture 11: Divide and Conquer I**:
-  - Overview of the divide and conquer paradigm.
-  - Steps: Divide, Conquer, Combine.
-
-- **Lecture 12: Sorting and Searching**:
-  - Merge Sort:
-    - Algorithm and time complexity.
-  - Binary Search:
-    - Recursive and iterative approaches.
-
-- **Lab 6: Implementing Merge Sort and Binary Search**:
-  - Implementation of merge sort.
-  - Binary search applications:
-    - Finding an element in a sorted array.
-    - Searching for bounds (lower and upper).
+## **Optimal Caching**
+- **Least Recently Used (LRU)**: Replace the least recently accessed element.
+- **FIFO (First-In-First-Out)**: Replace the oldest element.
 
 ---
 
-### **Week 7: Advanced Divide and Conquer**
-- **Lecture 13: Divide and Conquer II**:
-  - Advanced algorithms:
-    - Integer Multiplication (Karatsuba algorithm).
-    - Nearest Neighbor problem in computational geometry.
+# **3. Algorithm Design Paradigms**
+## **Motivation & Efficiency**
+- **Brute-force algorithms**: Try all possibilities.
+- **Divide & Conquer, Greedy, and Dynamic Programming**: Structured approaches for optimization.
 
-- **Lecture 14: Run-time Analysis**:
-  - Analyzing divide and conquer algorithms using recurrence relations.
-  - Master theorem.
-
-- **Lab 7: Advanced Divide and Conquer**:
-  - Implementation of integer multiplication.
-  - Practice problems:
-    - Closest pair of points problem.
+## **Run-Time Analysis**
+- **Big-O Notation**: Upper bound complexity.
+- **Common Complexities**: O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ).
 
 ---
 
-## Preparation Tips
-1. **Review Lecture Notes**:
-   - Focus on key definitions, algorithms, and their proofs.
-   - Understand the reasoning behind algorithm design choices.
+# **4. Minimum Spanning Tree (MST)**
+## **Prim’s Algorithm**
+- Start from any node, repeatedly pick the **smallest edge** that connects to the tree.
+```
+Prim(graph):
+    initialize min-heap and add start node
+    while heap is not empty:
+        pick the minimum edge
+        add its neighbor to the MST
+```
+✅ **O(E log V)** using a priority queue.
 
-2. **Practice Lab Problems**:
-   - Revisit implementation exercises from the labs.
-   - Modify and extend solutions to explore edge cases.
+## **Kruskal’s Algorithm**
+- Sort edges by weight.
+- Add edge if it doesn’t form a cycle (use Union-Find).
 
-3. **Solve Additional Problems**:
-   - Use platforms like LeetCode, Codeforces, and GeeksforGeeks to practice similar problems.
-
-4. **Create Summary Sheets**:
-   - Write concise notes for each topic:
-     - Key formulas.
-     - Algorithm steps.
-     - Time and space complexities.
-
-5. **Discuss with Peers**:
-   - Engage in study groups to clarify doubts and discuss alternative approaches.
+✅ **O(E log E)**.
 
 ---
 
-## Recommended Resources
-1. **Books**:
-   - "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein.
-   - "Algorithm Design" by Jon Kleinberg and Éva Tardos.
+# **5. Huffman Coding**
+## **Lossless Compression**
+1. **Build a frequency table**.
+2. **Create a priority queue** (min-heap).
+3. **Construct Huffman Tree**.
 
-2. **Online Tutorials**:
-   - [GeeksforGeeks](https://www.geeksforgeeks.org/)
-   - [CP-Algorithms](https://cp-algorithms.com/)
+### **Huffman Encoding Algorithm**
+```
+Huffman(frequencies):
+    create a priority queue of nodes
+    while more than one node:
+        extract two smallest nodes
+        merge them into a new node
+        insert back into queue
+```
+✅ **O(n log n)**.
 
-3. **Video Lectures**:
-   - [MIT OpenCourseWare - Introduction to Algorithms](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/)
-   - [YouTube - Abdul Bari](https://www.youtube.com/user/abdulbarikcs)
+---
+
+# **6. Divide-and-Conquer Paradigm**
+## **Merge Sort**
+```
+MergeSort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = MergeSort(arr[:mid])
+    right = MergeSort(arr[mid:])
+    return Merge(left, right)
+```
+✅ **O(n log n)**.
+
+## **Counting Inversions**
+- Modify merge sort to count **out-of-order pairs**.
+
+---
+
+# **7. Divide-and-Conquer II: Integer Multiplication & Closest Pair of Points**
+## **Karatsuba Algorithm**
+```
+Karatsuba(x, y):
+    if x or y is small, return x * y
+    split x and y into halves
+    compute three multiplications recursively
+    combine results
+```
+✅ **O(n^log₂3) ≈ O(n¹.⁵⁸)**.
+
+## **Closest Pair of Points**
+- **Divide points into two halves**.
+- **Find closest pair in each half**.
+- **Merge step: Check across the split**.
+✅ **O(n log n)**.
+
+---
+
+# **8. Stable Matching Problem**
+## **Gale-Shapley Algorithm**
+- **Deferred acceptance** strategy.
+
+### **Pseudocode**
+```
+GaleShapley(menPrefs, womenPrefs):
+    while there is an unengaged man:
+        m proposes to his favorite w who hasn't rejected him
+        if w is free:
+            match (m, w)
+        else:
+            if w prefers m over current partner m':
+                match (m, w)
+                unengage(m')
+            else:
+                w rejects m
+```
+✅ **O(n²)**.
+
+## **Key Properties**
+- Always finds a **stable matching**.
+- **Men-optimal, women-pessimal**.
+
+## **Applications**
+1. **College admissions**.
+2. **Medical residency matching**.
+3. **Job recruitment**.
+
+---
+
+# **Summary Table**
+| Topic | Algorithm | Complexity |
+|--------|------------|-------------|
+| **Graph Traversal** | BFS/DFS | O(V+E) |
+| **Bipartiteness** | BFS | O(V+E) |
+| **Topological Sorting** | DFS/Kahn’s | O(V+E) |
+| **Greedy** | Interval Scheduling | O(n log n) |
+| **MST** | Prim/Kruskal | O(E log V) |
+| **Huffman Coding** | Huffman Tree | O(n log n) |
+| **Sorting** | Merge Sort | O(n log n) |
+| **Integer Multiplication** | Karatsuba | O(n^1.58) |
+| **Closest Pair of Points** | Divide & Conquer | O(n log n) |
+| **Stable Matching** | Gale-Shapley | O(n²) |
+
+---
+
+# **Practice Problems**
+1. Implement **DFS & BFS** for a graph.
+2. Implement **Kruskal’s & Prim’s Algorithm** for MST.
+3. Implement **Huffman Encoding**.
+4. Implement **Merge Sort** with inversion counting.
+5. Implement **Gale-Shapley Algorithm** for stable matching.
+6. Solve **interval scheduling** using a greedy approach.
+
+---
+
+# **References**
+- 📖 **Introduction to Algorithms – CLRS**.
+- 📖 **Algorithm Design – Jon Kleinberg & Éva Tardos**.

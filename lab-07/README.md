@@ -1,187 +1,143 @@
-# Lab 07: Advanced Divide and Conquer
+# Divide and Conquer II: Integer Multiplication & Closest Pair of Points
 
 ## Overview
-This lab explores **Advanced Divide and Conquer** techniques, a cornerstone of efficient algorithm design. Divide and conquer breaks a problem into smaller sub-problems, solves them recursively, and combines their solutions to solve the original problem. Advanced techniques often involve applying divide and conquer to more complex scenarios.
+This module covers:
+1. **Efficient Integer Multiplication** using Divide and Conquer.
+2. **Closest Pair of Points** problem and its solution using Divide and Conquer.
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand advanced applications of the divide and conquer paradigm.
-2. Implement algorithms such as the **Fast Fourier Transform (FFT)**, **Closest Pair of Points**, and **Matrix Multiplication** using divide and conquer.
-3. Analyze the time complexity of advanced divide and conquer algorithms.
-4. Recognize the importance of recurrence relations in analyzing these algorithms.
+# 1. **Integer Multiplication using Divide and Conquer**
 
----
+### **Problem Statement**
+Given two large integers **X** and **Y**, we want to compute their product efficiently.
 
-## Lab Outline
+### **Naïve Approach (School Multiplication)**
+- Multiply each digit of **X** with each digit of **Y**.
+- Time Complexity: **O(n²)**.
 
-### 1. **What is Advanced Divide and Conquer?**
-Divide and conquer algorithms follow these steps:
-1. **Divide**: Split the problem into smaller sub-problems.
-2. **Conquer**: Solve the sub-problems recursively.
-3. **Combine**: Merge the results to solve the original problem.
+### **Divide-and-Conquer Approach**
+Using recursion, we can break multiplication into smaller subproblems.
 
-Advanced techniques apply this method to:
-- Multi-dimensional data.
-- Numerical algorithms.
-- Geometric problems.
+📌 **Example**  
+Let **X = 1234**, **Y = 5678**, and split them into two halves:
+```
+X = 12 | 34    (A | B)
+Y = 56 | 78    (C | D)
+```
+Then:
+```
+X * Y = (A * C) * 10^n + ((A * D) + (B * C)) * 10^(n/2) + (B * D)
+```
+This reduces the problem into **4 smaller multiplications**.
 
-### 2. **Importance of Recurrence Relations**
-Many divide and conquer algorithms' complexities are analyzed using recurrence relations, e.g., **T(n) = aT(n/b) + O(n^d)**. 
+### **Karatsuba Algorithm (Optimized Version)**
+Karatsuba reduces the number of multiplications from **4** to **3**:
+```
+X * Y = (A * C) * 10^n + ((A + B) * (C + D) - A*C - B*D) * 10^(n/2) + (B * D)
+```
+📌 **Time Complexity**: **O(n^log₂3) ≈ O(n^1.58)**  
+📌 **Space Complexity**: **O(n)**  
 
-Use the **Master Theorem** for analysis:
-- $a$: Number of sub-problems.
-- $b$: Division factor.
-- $d$: Cost of combining solutions.
-
----
-
-## Tasks
-
-### Task 1: Implementing Fast Fourier Transform (FFT)
-The **FFT** algorithm efficiently computes the discrete Fourier transform of a sequence, often used in signal processing.
-
-#### Algorithm Outline
-1. If the input size $n$ is 1, return the input.
-2. Split the sequence into even and odd indices.
-3. Compute FFT recursively on both parts.
-4. Combine results using the formula:
-$$
-   X[k] = E[k] + W_k \cdot O[k], \quad W_k = e^{-2\pi i k / n}
-$$
-
-#### Example Implementation
-```python
-import cmath
-
-def fft(a):
-    n = len(a)
-    if n == 1:
-        return a
-    w_n = cmath.exp(-2j * cmath.pi / n)
-    w = 1
-    a_even = fft(a[0::2])
-    a_odd = fft(a[1::2])
-    y = [0] * n
-    for k in range(n // 2):
-        y[k] = a_even[k] + w * a_odd[k]
-        y[k + n // 2] = a_even[k] - w * a_odd[k]
-        w *= w_n
-    return y
+### **Pseudocode**
+```
+Karatsuba(X, Y):
+    if X or Y is small enough:
+        return X * Y
+    n = max(length of X, length of Y)
+    m = n / 2
+    A, B = split X into two halves
+    C, D = split Y into two halves
+    AC = Karatsuba(A, C)
+    BD = Karatsuba(B, D)
+    AD_BC = Karatsuba(A + B, C + D) - AC - BD
+    return AC * 10^n + AD_BC * 10^(n/2) + BD
 ```
 
+📌 **Comparison**
+| Algorithm          | Time Complexity  | Space Complexity |
+|-------------------|-----------------|------------------|
+| Naïve Multiplication | O(n²)         | O(1)            |
+| Karatsuba         | O(n^1.58)       | O(n)            |
+| Strassen's Algorithm (Matrix Multiplication) | O(n^2.81) | O(n²) |
+
 ---
 
-### Task 2: Closest Pair of Points (2D Plane)
-Given a set of points in a 2D plane, find the pair of points with the smallest distance using divide and conquer.
+# 2. **Closest Pair of Points Problem**
 
-#### Algorithm Outline
-1. Sort points by x-coordinates.
-2. Divide points into two halves.
-3. Find the closest pair in each half recursively.
-4. Combine results by checking pairs across the dividing line.
+### **Problem Statement**
+Given **n** points on a 2D plane, find the pair with the **smallest Euclidean distance**.
 
-#### Steps
-- Use the Euclidean distance formula.
-- Maintain a "strip" of points close to the dividing line.
+### **Naïve Approach (Brute Force)**
+Compute all **n(n-1)/2** pairwise distances.
 
-#### Example Implementation
-```python
-import math
+📌 **Time Complexity**: **O(n²)**  
+📌 **Space Complexity**: **O(1)**  
 
-def distance(p1, p2):
-    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+### **Divide-and-Conquer Approach**
+1. **Sort the points by X-coordinate.**
+2. **Recursively find the closest pair** in both halves.
+3. **Check for closest pairs across the split line.**
 
-def closest_pair(points):
-    if len(points) <= 3:
-        return min((distance(p1, p2), (p1, p2)) 
-                   for i, p1 in enumerate(points) 
-                   for p2 in points[i+1:])
-    
-    mid = len(points) // 2
-    mid_point = points[mid]
-    
-    dl = closest_pair(points[:mid])
-    dr = closest_pair(points[mid:])
-    d = min(dl, dr)
-    
-    strip = [p for p in points if abs(p[0] - mid_point[0]) < d[0]]
-    strip.sort(key=lambda p: p[1])
-    
-    for i in range(len(strip)):
-        for j in range(i + 1, len(strip)):
-            if strip[j][1] - strip[i][1] >= d[0]:
-                break
-            d = min(d, (distance(strip[i], strip[j]), (strip[i], strip[j])))
-    return d
+📌 **Time Complexity**: **O(n log n)**  
+📌 **Space Complexity**: **O(n)**  
+
+### **Pseudocode**
+```
+ClosestPair(P):
+    if size of P is small:
+        return brute force solution
+    Sort P by x-coordinates
+    mid = |P| / 2
+    leftHalf = P[:mid]
+    rightHalf = P[mid:]
+    d1 = ClosestPair(leftHalf)
+    d2 = ClosestPair(rightHalf)
+    d = min(d1, d2)
+    strip = Points within distance d from mid-line
+    return min(d, ClosestSplitPair(strip, d))
 ```
 
----
-
-### Task 3: Matrix Multiplication (Strassen's Algorithm)
-Strassen's algorithm improves matrix multiplication time complexity from $O(n^3)$ to approximately $O(n^{2.81})$.
-
-#### Algorithm Outline
-1. Split two $n \times n$ matrices into $n/2 \times n/2$ submatrices.
-2. Compute 7 products recursively instead of 8.
-3. Combine results to get the final matrix.
-
-#### Example Implementation
-```python
-def add_matrix(A, B):
-    return [[A[i][j] + B[i][j] for j in range(len(A))] for i in range(len(A))]
-
-def subtract_matrix(A, B):
-    return [[A[i][j] - B[i][j] for j in range(len(A))] for i in range(len(A))]
-
-def strassen(A, B):
-    n = len(A)
-    if n == 1:
-        return [[A[0][0] * B[0][0]]]
-    
-    mid = n // 2
-    A11 = [row[:mid] for row in A[:mid]]
-    A12 = [row[mid:] for row in A[:mid]]
-    A21 = [row[:mid] for row in A[mid:]]
-    A22 = [row[mid:] for row in A[mid:]]
-    
-    B11 = [row[:mid] for row in B[:mid]]
-    B12 = [row[mid:] for row in B[:mid]]
-    B21 = [row[:mid] for row in B[mid:]]
-    B22 = [row[mid:] for row in B[mid:]]
-    
-    M1 = strassen(add_matrix(A11, A22), add_matrix(B11, B22))
-    M2 = strassen(add_matrix(A21, A22), B11)
-    M3 = strassen(A11, subtract_matrix(B12, B22))
-    M4 = strassen(A22, subtract_matrix(B21, B11))
-    M5 = strassen(add_matrix(A11, A12), B22)
-    M6 = strassen(subtract_matrix(A21, A11), add_matrix(B11, B12))
-    M7 = strassen(subtract_matrix(A12, A22), add_matrix(B21, B22))
-    
-    C11 = add_matrix(subtract_matrix(add_matrix(M1, M4), M5), M7)
-    C12 = add_matrix(M3, M5)
-    C21 = add_matrix(M2, M4)
-    C22 = add_matrix(subtract_matrix(add_matrix(M1, M3), M2), M6)
-    
-    return [C11[i] + C12[i] for i in range(mid)] + [C21[i] + C22[i] for i in range(mid)]
+```
+ClosestSplitPair(strip, d):
+    Sort strip by y-coordinate
+    for each point p in strip:
+        check only next 6 points for a closer pair
+    return minimum distance found
 ```
 
+📌 **Why Check Only 6 Points?**
+- Due to geometric properties, there can be at most **6 points** within distance **d** of any given point in the strip.
+
+📌 **Example**
+```
+Input:  [(1,2), (3,6), (4,5), (7,8), (10,12)]
+Output: Closest pair (3,6) and (4,5) with distance 1.41
+```
+
+### **Comparison**
+| Algorithm          | Time Complexity  | Space Complexity |
+|-------------------|-----------------|------------------|
+| Brute Force      | O(n²)           | O(1)            |
+| Divide & Conquer | O(n log n)      | O(n)            |
+
 ---
 
-## Bonus Task: Recurrence Relation Practice
-1. Solve recurrence relations using the Master Theorem.
-2. Analyze FFT, Closest Pair, and Strassen algorithms.
+# **Summary**
+✔ **Karatsuba Algorithm** reduces integer multiplication from **O(n²) to O(n^1.58)**.  
+✔ **Closest Pair Algorithm** improves from **O(n²) to O(n log n)**.  
+✔ **Divide-and-Conquer** helps solve these problems **efficiently**.  
 
 ---
 
-## Submission Instructions
-1. Save your solutions in `advanced_divide_conquer.py`.
-2. Submit via Canvas by the deadline.
-3. Include comments and analysis of each algorithm.
+# **Exercises**
+1. Implement **Karatsuba Multiplication** for large numbers.
+2. Implement **Closest Pair of Points using Divide and Conquer**.
+3. Compare **Karatsuba vs Naïve Multiplication** on large inputs.
+4. Solve **Closest Pair of Points** problems on Codeforces, LeetCode.
 
 ---
 
-## Additional Resources
-- [MIT OpenCourseWare: Divide and Conquer](https://ocw.mit.edu)
-- [Master Theorem](https://en.wikipedia.org/wiki/Master_theorem)
+# **Resources**
+- 📖 **Introduction to Algorithms (CLRS)** - Divide & Conquer.
+- 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
