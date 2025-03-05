@@ -1,153 +1,165 @@
-# Lab 02: Algorithm Analysis
+# Algorithm Design Paradigms, Efficiency, and Run-time Analysis
 
 ## Overview
-Welcome to **Lab 02: Algorithm Analysis** of COMP 3010! This lab focuses on understanding the basics of algorithm analysis, including runtime complexity (Big-O notation), space complexity, and empirical testing. You will analyze and compare the efficiency of different algorithms using Python.
+Algorithm design is a crucial aspect of computer science that focuses on **creating efficient solutions** to computational problems. This module explores:
+1. **Motivation for Algorithm Design Paradigms**
+2. **Concepts of Algorithmic Efficiency**
+3. **Run-time Analysis of Algorithms**
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will be able to:
-1. Understand and describe the **time complexity** and **space complexity** of algorithms.
-2. Use **Big-O notation** to express algorithmic efficiency.
-3. Compare algorithms both theoretically and empirically through Python implementation.
-4. Visualize and interpret the results of algorithm analysis using basic plotting techniques.
+## 1. **Motivation for Algorithm Design Paradigms**
+### Why Study Algorithm Design?
+- **Efficiency Matters**: Poorly designed algorithms can be **exponentially slower**.
+- **Scalability**: Algorithms must handle **large inputs** efficiently.
+- **Computational Resources**: Optimization saves **time, memory, and processing power**.
+
+### **Common Algorithm Design Paradigms**
+1. **Divide and Conquer** – Breaks a problem into smaller subproblems and combines solutions.  
+   📌 **Example**: Merge Sort, Quick Sort, Binary Search.  
+2. **Greedy Algorithms** – Makes locally optimal choices at each step.  
+   📌 **Example**: Huffman Coding, Activity Selection.  
+3. **Dynamic Programming (DP)** – Solves subproblems once and stores results to avoid recomputation.  
+   📌 **Example**: Fibonacci, Knapsack, Floyd-Warshall Algorithm.  
+4. **Backtracking & Branch and Bound** – Used for combinatorial problems by searching through possibilities.  
+   📌 **Example**: N-Queens, Traveling Salesman Problem (TSP).  
+
+Each paradigm has **strengths and weaknesses**, and selecting the right approach is **key** to solving problems efficiently.
 
 ---
 
-## Lab Outline
+## 2. **Concepts of Algorithmic Efficiency**
+Efficiency is measured by analyzing **how an algorithm’s resource consumption scales** with input size.
 
-### 1. **Introduction to Algorithm Analysis**
-   - Review of **asymptotic notation**: Big-O, Omega (Ω), and Theta (Θ).
-   - Examples of common time complexities:
-     - Constant: $O(1)$
-     - Logarithmic: $O(\log n)$
-     - Linear: $O(n)$
-     - Quadratic: $O(n^2)$
-     - Exponential: $O(2^n)$
-   - Understanding **best-case**, **average-case**, and **worst-case** scenarios.
+### **Time Complexity**
+- **Definition**: Measures how the execution time of an algorithm increases as input size `n` grows.
+- **Big-O Notation**: Expresses the upper bound of an algorithm’s growth rate.
 
-### 2. **Runtime Complexity Analysis**
-   - Analyzing simple iterative and recursive algorithms.
-   - Measuring the runtime of Python functions using the `time` module.
+| Complexity | Notation | Example Algorithm |
+|------------|----------|------------------|
+| Constant   | O(1)  | Hash table lookup |
+| Logarithmic | O(log n) | Binary Search |
+| Linear     | O(n)  | Linear Search |
+| Linearithmic | O(n log n) | Merge Sort, Quick Sort (avg) |
+| Quadratic  | O(n²)  | Bubble Sort, Selection Sort |
+| Exponential | O(2ⁿ)  | Recursive Fibonacci |
+| Factorial  | O(n!)  | Brute force TSP |
 
-### 3. **Space Complexity**
-   - Identifying memory usage for variables, arrays, and function calls.
-   - Examples of space complexity in iterative vs. recursive algorithms.
+📌 **Example:**  
+Finding an element in an **unsorted array** → **O(n)** (linear search).  
+Finding an element in a **sorted array** → **O(log n)** (binary search).
 
-### 4. **Empirical Analysis**
-   - Writing Python code to measure the performance of algorithms.
-   - Plotting runtime comparisons using libraries like `matplotlib`.
-
----
-
-## Getting Started
-
-### Prerequisites
-- Ensure Python (>= 3.8) and `matplotlib` are installed on your system.
-  ```bash
-  pip install matplotlib
-  ```
-- A code editor such as VSCode, PyCharm, or Jupyter Notebook is recommended.
-
-### Files Provided
-1. `algorithm_analysis.py` - A template file for implementing and analyzing algorithms.
-2. `README.md` - This instruction file.
-3. `example_data.txt` - Sample input data for testing.
+### **Space Complexity**
+- **Definition**: Measures the memory an algorithm needs.
+- **In-place algorithms**: Use **O(1) or O(log n)** extra space.
+- **Recursive algorithms**: Often use **O(n)** stack space.
 
 ---
 
-## Task 1: Analyze Basic Algorithms
+## 3. **Run-time Analysis of Algorithms**
+### **Types of Algorithm Analysis**
+1. **Worst-case analysis** (Big-O) – Maximum runtime for **any** input of size `n`.
+2. **Best-case analysis** (Omega-Ω) – Minimum runtime (not very useful for practical optimization).
+3. **Average-case analysis** (Theta-Θ) – Expected runtime for **random inputs**.
 
-### Task 1.1: Linear Search
-1. Open `algorithm_analysis.py` and locate the `linear_search(arr, target)` function.
-2. Implement the algorithm:
-   - Input: A list `arr` and a target value `target`.
-   - Output: The index of the target value if found, otherwise `-1`.
-3. Analyze the time complexity of this algorithm in the worst-case scenario.
+📌 **Example: QuickSort**  
+- **Worst-case**: O(n²) (when pivot selection is poor).  
+- **Best-case**: O(n log n) (ideal pivot selection).  
+- **Average-case**: O(n log n) (randomized pivot).  
 
-### Task 1.2: Binary Search
-1. Locate the `binary_search(arr, target)` function in the same file.
-2. Implement the algorithm:
-   - Input: A sorted list `arr` and a target value `target`.
-   - Output: The index of the target value if found, otherwise `-1`.
-3. Analyze the time complexity of binary search and compare it to linear search.
-
----
-
-## Task 2: Compare Iterative vs. Recursive Algorithms
-
-### Task 2.1: Factorial Calculation
-1. Implement the factorial function using:
-   - Iteration (`factorial_iterative(n)`).
-   - Recursion (`factorial_recursive(n)`).
-2. Analyze and compare the runtime and space complexity of both implementations.
-
-### Task 2.2: Fibonacci Sequence
-1. Implement the Fibonacci sequence calculation using:
-   - Recursion (`fibonacci_recursive(n)`).
-   - Dynamic programming (`fibonacci_dp(n)`).
-2. Compare the efficiency of the recursive approach vs. the dynamic programming approach.
-
----
-
-## Task 3: Empirical Analysis and Visualization
-
-### Task 3.1: Measure Runtime
-1. Use the `time` module to measure the runtime of your algorithms with varying input sizes.
-2. Write a function `measure_runtime(func, *args)` that takes an algorithm and its arguments, then returns the time it takes to execute.
-
-### Task 3.2: Plot Runtime
-1. Use `matplotlib` to plot the runtime of different algorithms.
-   - Example: Plot the runtime of linear search vs. binary search for input sizes ranging from 1000 to 100000.
-2. Include appropriate labels, legends, and titles in your plot.
-
----
-
-## Sample Code
-
-### Example: Measuring and Plotting Runtime
-```python
-import time
-import matplotlib.pyplot as plt
-
-def measure_runtime(func, *args):
-    start_time = time.time()
-    func(*args)
-    return time.time() - start_time
-
-def example_plot():
-    sizes = [10**i for i in range(1, 6)]
-    runtimes = []
-
-    for size in sizes:
-        arr = list(range(size))
-        runtimes.append(measure_runtime(linear_search, arr, size - 1))
-    
-    plt.plot(sizes, runtimes, label="Linear Search")
-    plt.xlabel("Input Size")
-    plt.ylabel("Runtime (s)")
-    plt.title("Algorithm Runtime Analysis")
-    plt.legend()
-    plt.show()
+### **Asymptotic Growth Comparison**
+For large `n`:
 ```
+O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!)
+```
+This means **choosing the right algorithm** can significantly impact performance.
 
 ---
 
-## Submission Instructions
-1. Save your implementation in `algorithm_analysis.py`.
-2. Include plots and runtime results in a file named `runtime_analysis.pdf`.
-3. Submit your files on Canvas by the deadline.
+## **Pseudocode for Time Complexity Analysis**
+To illustrate **run-time analysis**, let’s analyze some algorithms.
+
+### **1. Linear Search (O(n))**
+```
+LinearSearch(arr, target):
+    for i = 0 to arr.length - 1:
+        if arr[i] == target:
+            return i
+    return -1  # Not found
+```
+**Analysis**:
+- **Worst-case**: O(n) (target is last or absent).
+- **Best-case**: O(1) (target is first element).
+- **Space complexity**: O(1) (no extra memory used).
 
 ---
 
-## Additional Resources
-- [Big-O Cheat Sheet](https://www.bigocheatsheet.com/)
-- Python documentation: [https://docs.python.org/3/](https://docs.python.org/3/)
-- `matplotlib` documentation: [https://matplotlib.org/](https://matplotlib.org/)
+### **2. Binary Search (O(log n))**
+```
+BinarySearch(arr, target, low, high):
+    if low > high:
+        return -1
+    mid = (low + high) / 2
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] > target:
+        return BinarySearch(arr, target, low, mid - 1)
+    else:
+        return BinarySearch(arr, target, mid + 1, high)
+```
+**Analysis**:
+- **Worst-case**: O(log n) (logarithmic search space reduction).
+- **Best-case**: O(1) (target found at `mid` in the first check).
+- **Space complexity**: O(log n) (recursive calls).
 
 ---
 
-## Notes
-- Test your algorithms with a range of input sizes to ensure correctness and efficiency.
-- Add comments to your code to explain the time and space complexity of each function.
-- Reach out to the TA if you encounter any issues.
+### **3. Merge Sort (O(n log n))**
+```
+MergeSort(arr):
+    if arr.length ≤ 1:
+        return arr
+    mid = arr.length / 2
+    left = MergeSort(arr[0:mid])
+    right = MergeSort(arr[mid:])
+    return Merge(left, right)
+```
+**Analysis**:
+- **Worst-case**: O(n log n) (recursive divide and merge).
+- **Best-case**: O(n log n).
+- **Space complexity**: O(n) (extra space for merging).
+
+---
+
+## **Practical Examples**
+1. **Searching Algorithms**:
+   - **O(n) for linear search** vs. **O(log n) for binary search**.
+2. **Sorting Algorithms**:
+   - **O(n log n) (Merge Sort, Quick Sort)** vs. **O(n²) (Bubble Sort)**.
+3. **Graph Algorithms**:
+   - **O(V + E) (BFS/DFS for connectivity)**.
+   - **O(V²) (Floyd-Warshall for shortest path)**.
+
+---
+
+## **Learning Outcomes**
+✔ Understand **algorithmic paradigms** and their motivations.  
+✔ Analyze **time complexity** and **asymptotic growth**.  
+✔ Differentiate between **best, worst, and average-case runtimes**.  
+✔ Apply **efficient algorithms** to real-world problems.  
+
+---
+
+## **Resources**
+- 📖 **Introduction to Algorithms (CLRS)** - Chapter on **Algorithm Analysis**.
+- 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
+- 🔗 **Big-O Complexity Cheat Sheet**: [Big-O Cheat Sheet](https://www.bigocheatsheet.com/)
+- 🔗 **Sorting Algorithm Visualizations**: [Sorting Visualizer](https://visualgo.net/en/sorting)
+
+---
+
+## **Exercises**
+1. Implement **linear search** and **binary search**; compare their runtimes.
+2. Implement **Merge Sort** and **QuickSort**; analyze their performance.
+3. Solve problems on **time complexity and efficiency**.
+4. Compare different sorting algorithms using **real-world datasets**.

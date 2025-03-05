@@ -1,164 +1,183 @@
-# Lab 05: Minimum Spanning Tree (MST)
+# Minimum Spanning Tree (MST) & Huffman Codes
 
 ## Overview
-In this lab, you will explore **Minimum Spanning Trees (MST)**, an essential concept in graph theory. A spanning tree connects all the vertices in a graph with the minimum total edge weight. You will learn two classical algorithms for finding MSTs: **Kruskal's Algorithm** and **Prim's Algorithm**.
+This module covers two important graph algorithms:
+1. **Minimum Spanning Trees (MST)** – Efficient ways to connect all nodes in a weighted graph with minimal cost.
+2. **Huffman Codes** – A greedy algorithm used for optimal data compression.
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the concept of a **Minimum Spanning Tree**.
-2. Implement **Kruskal's Algorithm** using a Disjoint Set (Union-Find) data structure.
-3. Implement **Prim's Algorithm** using a priority queue (min-heap).
-4. Compare and analyze the performance of these algorithms.
+# 1. **Minimum Spanning Tree (MST)**
+
+### **Definition**
+A **Minimum Spanning Tree (MST)** of a weighted graph is a **subset of edges** that:
+- Connects all the vertices **without forming a cycle**.
+- Has the **minimum possible total weight**.
+
+📌 **Applications**:
+- Network Design (Computer networks, power grids).
+- Clustering in Machine Learning.
+- Approximate solutions to NP-hard problems like **Traveling Salesman Problem (TSP)**.
 
 ---
 
-## Lab Outline
+## **Prim’s Algorithm (Greedy Approach)**
+Prim’s algorithm builds the MST **incrementally**, starting from any node and **expanding to the nearest vertex**.
 
-### 1. **Introduction to MST**
-- A **spanning tree** is a subset of the edges in a graph that forms a tree, connecting all vertices with no cycles.
-- A **minimum spanning tree** is a spanning tree with the smallest total edge weight.
+### **Steps**
+1. Select **any node** as the starting point.
+2. Add the **smallest edge** that connects a visited vertex to an unvisited vertex.
+3. Repeat until **all vertices are included**.
 
-**Applications of MST**:
-- Network design (telecommunications, roads, electrical grids).
-- Approximation algorithms for NP-hard problems (e.g., Traveling Salesman Problem).
-- Cluster analysis.
+### **Pseudocode**
+```
+PrimMST(graph):
+    Initialize MST set = { }
+    Start from an arbitrary vertex
+    While there are unvisited vertices:
+        Find the minimum weight edge that connects MST to an unvisited vertex
+        Add this edge to the MST set
+    Return MST
+```
 
-### 2. **Algorithms for MST**
-- **Kruskal's Algorithm**:
-  - Greedily adds edges to the MST in increasing order of weight while avoiding cycles.
-  - Uses the **Disjoint Set Union-Find** structure for cycle detection.
-- **Prim's Algorithm**:
-  - Starts from a vertex and grows the MST by adding the smallest edge connecting the MST to a new vertex.
-  - Efficiently implemented using a **priority queue** (min-heap).
+### **Time Complexity**
+- **O(V²) using an adjacency matrix** (brute force).
+- **O(E log V) using a priority queue** (efficient for sparse graphs).
 
----
-
-## Getting Started
-
-### Prerequisites
-- Familiarity with graphs (vertices, edges, weights, adjacency representation).
-- Knowledge of sorting, priority queues, and basic data structures (e.g., lists, sets).
-
-### Files Provided
-1. `mst_algorithms.py` - A template for implementing MST algorithms.
-2. `graph_input.txt` - A sample input file representing a graph.
-3. `README.md` - This instruction file.
-
----
-
-## Tasks
-
-### Task 1: Implement Kruskal's Algorithm
-1. Open `mst_algorithms.py`.
-2. Define the function `kruskal_mst(graph)`.
-3. Steps:
-   - Sort all edges in ascending order by weight.
-   - Use a **Disjoint Set Union-Find** structure to check for cycles.
-   - Add edges to the MST until all vertices are connected.
-
-4. Example Implementation:
-   ```python
-   def kruskal_mst(graph):
-       # Initialize Union-Find structure
-       # Sort edges by weight
-       # Iteratively add edges, checking for cycles
-       return mst, total_weight
-   ```
-
-5. Test with:
-   ```python
-   graph = {
-       'vertices': ['A', 'B', 'C', 'D'],
-       'edges': [
-           ('A', 'B', 1), ('B', 'C', 2), ('C', 'D', 3), ('A', 'D', 4)
-       ]
-   }
-   mst, weight = kruskal_mst(graph)
-   print("MST:", mst, "Total Weight:", weight)
-   ```
+📌 **Example**:  
+Given a weighted graph:
+```
+     2      3
+  A-----B------C
+   \    |      |
+  6 \   | 8    | 5
+     \  |      |
+      D-------E
+        9
+```
+Prim’s MST selects **minimum edges** without forming cycles.
 
 ---
 
-### Task 2: Implement Prim's Algorithm
-1. Define the function `prim_mst(graph)`.
-2. Steps:
-   - Initialize a min-heap to select edges with the smallest weight.
-   - Use a set to track visited vertices.
-   - Expand the MST by adding the smallest edge from the heap.
+## **Kruskal’s Algorithm (Greedy + Disjoint Set Union)**
+Kruskal’s algorithm sorts edges by **weight** and **adds them if they don’t form a cycle**.
 
-3. Example Implementation:
-   ```python
-   def prim_mst(graph):
-       # Initialize a priority queue
-       # Add edges of the starting vertex to the queue
-       # Iteratively add the smallest edge that connects to a new vertex
-       return mst, total_weight
-   ```
+### **Steps**
+1. Sort all edges by weight.
+2. Initialize an empty MST.
+3. Iterate through edges:
+   - If an edge connects **two different trees**, add it to the MST.
+   - Otherwise, discard it (to prevent cycles).
+4. Repeat until **MST contains V-1 edges**.
 
-4. Test with:
-   ```python
-   graph = {
-       'vertices': ['A', 'B', 'C', 'D'],
-       'edges': [
-           ('A', 'B', 1), ('B', 'C', 2), ('C', 'D', 3), ('A', 'D', 4)
-       ]
-   }
-   mst, weight = prim_mst(graph)
-   print("MST:", mst, "Total Weight:", weight)
-   ```
+### **Pseudocode**
+```
+KruskalMST(graph):
+    Sort edges by weight
+    Initialize MST set = { }
+    For each edge (u, v) in sorted edges:
+        If u and v are in different components:
+            Add (u, v) to MST
+            Merge the components
+    Return MST
+```
 
----
+### **Time Complexity**
+- **O(E log E) using sorting + DSU (Disjoint Set Union)**.
 
-### Task 3: Analyze and Compare Algorithms
-1. Compare the time complexity:
-   - **Kruskal's Algorithm**: $O(E \log E + E \cdot \alpha(V))$, where $\alpha(V)$ is the inverse Ackermann function (from Union-Find).
-   - **Prim's Algorithm**: $O(E + V \log V)$ with an adjacency list and a min-heap.
-2. Discuss practical use cases for each algorithm:
-   - Kruskal's is efficient for sparse graphs.
-   - Prim's is efficient for dense graphs.
+📌 **Example**:  
+For the same graph, Kruskal’s algorithm **selects the lightest edges**, ensuring no cycles.
+
+### **Comparison: Prim vs. Kruskal**
+| Feature        | Prim’s Algorithm  | Kruskal’s Algorithm |
+|--------------|----------------|----------------|
+| Strategy     | Expands from a vertex | Expands from edges |
+| Works well for | Dense graphs | Sparse graphs |
+| Complexity   | O(E log V) (heap) | O(E log E) (sorting) |
 
 ---
 
-### Task 4: Bonus Task - Visualize the MST
-1. Use the `networkx` library to visualize the MST.
-2. Example:
-   ```python
-   import networkx as nx
-   import matplotlib.pyplot as plt
+# 2. **Huffman Coding (Greedy Algorithm)**
+Huffman coding is an **optimal prefix coding** algorithm used in **data compression**.
 
-   def visualize_mst(graph, mst):
-       G = nx.Graph()
-       for edge in graph['edges']:
-           G.add_edge(edge[0], edge[1], weight=edge[2])
-       mst_edges = [(u, v) for u, v, _ in mst]
-       pos = nx.spring_layout(G)
-       nx.draw(G, pos, with_labels=True)
-       nx.draw_networkx_edges(G, pos, edgelist=mst_edges, edge_color='r', width=2)
-       plt.show()
-   ```
+### **Definition**
+- Assigns **variable-length codes** to characters.
+- **Frequent characters get shorter codes**.
+- **Infrequent characters get longer codes**.
 
-3. Call `visualize_mst(graph, mst)` after finding the MST.
+📌 **Applications**:
+- File compression (ZIP, GZIP).
+- Media compression (JPEG, MP3).
+- Transmission encoding.
+
+### **Steps**
+1. **Count character frequencies**.
+2. **Build a min-heap** where each node is a character.
+3. **Merge two smallest nodes** into a new node with their sum as weight.
+4. **Repeat until one tree remains**.
+5. **Assign 0 to left branches, 1 to right branches**.
+
+### **Pseudocode**
+```
+HuffmanEncoding(freq):
+    Create a min-heap of leaf nodes (characters with frequencies)
+    While more than one node in the heap:
+        Remove two smallest nodes
+        Merge them into a new node (sum of weights)
+        Insert back into heap
+    Assign binary codes to each character based on tree traversal
+```
+
+### **Example**
+**Input frequencies**:
+```
+A: 5, B: 9, C: 12, D: 13, E: 16, F: 45
+```
+Build tree:
+```
+        (100)
+       /      \
+     (45)    (55)
+           /       \
+         (25)      (30)
+        /    \     /    \
+      (12)  (13) (14)   (16)
+     /   \       /   \
+   A(5)  B(9)  C(12) D(13)
+```
+Generated **Huffman codes**:
+```
+A -> 1100
+B -> 1101
+C -> 100
+D -> 101
+E -> 00
+F -> 01
+```
+
+### **Time Complexity**
+- **O(n log n) using heaps**.
+
+📌 **Why Huffman Codes Work?**
+- Uses **prefix property**: No code is a prefix of another.
+- **Always optimal** for compression when symbol frequencies are known.
 
 ---
 
-## Submission Instructions
-1. Save your implementation in `mst_algorithms.py`.
-2. Include your analysis in `analysis.txt`.
-3. Attach screenshots or plots of the MST visualization.
-4. Submit all files on Canvas by the deadline.
+# **Summary**
+✔ **Prim’s & Kruskal’s Algorithms**: Find **Minimum Spanning Trees** for efficient connectivity.  
+✔ **Huffman Coding**: A **greedy** method for **optimal compression**.  
 
 ---
 
-## Additional Resources
-- [Kruskal's Algorithm on GeeksforGeeks](https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm/)
-- [Prim's Algorithm on GeeksforGeeks](https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/)
-- [NetworkX Documentation](https://networkx.org/documentation/stable/index.html)
+# **Exercises**
+1. Implement **Prim’s and Kruskal’s algorithms** and compare their runtimes on different graphs.
+2. Given a set of character frequencies, **construct a Huffman Tree**.
+3. Solve **MST problems** on online judges like Codeforces, LeetCode.
 
 ---
 
-## Notes
-- Test your code with both connected and disconnected graphs.
-- Handle edge cases (e.g., graphs with multiple edges of the same weight).
-- Include comments explaining your implementation logic and time complexity.
+# **Resources**
+- 📖 **Introduction to Algorithms (CLRS)** - MST & Huffman Codes.
+- 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
+- 🔗 **MST & Huffman Visualization**: [Graph Visualizer](https://visualgo.net/en)

@@ -1,169 +1,142 @@
-# Lab 04: Greedy Algorithms
+# Greedy Algorithms: Overview, Interval Scheduling, and Optimal Caching
 
 ## Overview
-In **Lab 04: Greedy Algorithms**, you will explore one of the most intuitive algorithmic paradigms—**Greedy Algorithms**. These algorithms make locally optimal choices at each step, aiming to find the global optimum. You will implement classic greedy algorithms and analyze their correctness and efficiency.
+The **greedy paradigm** is a powerful algorithmic approach where we make the best choice at each step without reconsidering past choices. This method is often used in optimization problems where **local choices** lead to a **globally optimal solution**.
+
+### Topics Covered:
+1. **Greedy Paradigm**
+2. **Interval Scheduling (Activity Selection)**
+3. **Optimal Caching (Page Replacement Algorithms)**
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the principles of the **Greedy Algorithm paradigm**.
-2. Implement and apply greedy algorithms to solve classical optimization problems.
-3. Evaluate when greedy algorithms work and their limitations.
-4. Analyze time and space complexity of greedy solutions.
+## 1. **Overview of the Greedy Paradigm**
+A **greedy algorithm** builds up a solution step by step, always choosing the **best possible option** at each step. The key components of a greedy algorithm:
+- **Greedy Choice Property**: A global optimal solution can be reached by choosing locally optimal choices.
+- **Optimal Substructure**: An optimal solution to a problem contains optimal solutions to subproblems.
+
+### **Steps in Designing a Greedy Algorithm**
+1. **Identify the problem’s optimal substructure**.
+2. **Prove that a greedy choice leads to an optimal solution**.
+3. **Design an efficient algorithm (often O(n log n) or O(n))**.
+
+📌 **Use cases**: **Scheduling, caching, Huffman coding, MST (Kruskal’s/Prim’s algorithm).**
 
 ---
 
-## Lab Outline
+## 2. **Interval Scheduling (Activity Selection Problem)**
+The **Interval Scheduling Problem** involves selecting the **maximum number of non-overlapping intervals** from a given set.
 
-### 1. **Introduction to Greedy Algorithms**
-   - Definition and properties:
-     - Local vs. global optima.
-     - Greedy-choice property.
-     - Optimal substructure.
-   - When greedy algorithms work:
-     - Problems with specific constraints or structures.
+### **Problem Statement**
+- Given **n intervals** `[start_i, end_i]`, find the **maximum number of non-overlapping intervals**.
 
----
+### **Greedy Strategy**
+1. **Sort intervals by their end time** (`end_i` in ascending order).
+2. **Iterate through the sorted list**, selecting intervals that **do not overlap** with previously chosen ones.
+3. **Continue until no more intervals can be selected**.
 
-## Getting Started
+### **Pseudocode**
+```
+IntervalScheduling(intervals):
+    Sort intervals by increasing end time
+    selected = []
+    last_end = -∞
+    
+    for (start, end) in intervals:
+        if start ≥ last_end:
+            selected.append((start, end))
+            last_end = end
+    
+    return selected  # Maximum set of non-overlapping intervals
+```
 
-### Prerequisites
-- Ensure Python (>= 3.8) is installed.
-- Familiarity with basic programming constructs like loops, lists, and sorting.
-- Review of sorting algorithms (e.g., merge sort, quick sort).
-
-### Files Provided
-1. `greedy_algorithms.py` - A template file to implement greedy algorithms.
-2. `sample_input.txt` - Input examples for testing.
-3. `README.md` - This instruction file.
-
----
-
-## Tasks
-
-### Task 1: Implement a Greedy Algorithm Template
-1. Open `greedy_algorithms.py`.
-2. Implement a generic function template:
-   ```python
-   def greedy_algorithm(problem_instance):
-       # Define the selection criteria.
-       # Perform the selection iteratively.
-       # Construct the solution incrementally.
-       return solution
-   ```
+📌 **Time Complexity**: **O(n log n)** (due to sorting).  
+📌 **Use Cases**:
+- Scheduling tasks with deadlines.
+- Assigning non-overlapping meetings to a room.
 
 ---
 
-### Task 2: Classic Greedy Problems
+## 3. **Optimal Caching (Page Replacement Algorithms)**
+Optimal caching is about **efficient memory management**. A **cache** stores frequently used items, but when it is **full**, a **replacement strategy** is needed.
 
-#### 2.1: **Activity Selection Problem**
-- **Problem**: Given `n` activities with start and finish times, select the maximum number of non-overlapping activities.
-- **Input**: A list of tuples `(start, finish)` for each activity.
-- **Output**: A list of selected activities.
+### **Common Page Replacement Algorithms**
+#### **1. Optimal Page Replacement (Belady’s Algorithm)**
+- Replace the page that will **not be used for the longest time** in the future.
+- **Requires future knowledge** → **Not practical but optimal**.
 
-- **Steps**:
-  1. Sort activities by their finish times.
-  2. Select the first activity.
-  3. Iterate through the remaining activities, selecting only those that do not overlap.
+**Pseudocode:**
+```
+OptimalCache(pages, cache_size):
+    cache = []
+    
+    for i in range(len(pages)):
+        if pages[i] in cache:
+            continue  # Page already in cache
+        
+        if len(cache) < cache_size:
+            cache.append(pages[i])
+        else:
+            future_uses = {page: pages[i+1:].index(page) if page in pages[i+1:] else float('inf') for page in cache}
+            page_to_remove = max(future_uses, key=future_uses.get)
+            cache.remove(page_to_remove)
+            cache.append(pages[i])
+```
+📌 **Use Case**: Theoretical **baseline for cache eviction policies**.
 
-- **Example**:
-  ```python
-  activities = [(1, 4), (3, 5), (0, 6), (5, 7), (8, 9)]
-  result = activity_selection(activities)
-  print("Selected activities:", result)
-  ```
+#### **2. Least Recently Used (LRU)**
+- Replace the **least recently used page**.
+- **Implemented using a HashMap + Doubly Linked List** (O(1) operations).
 
----
+**Pseudocode (Using Linked HashMap-like structure):**
+```
+LRUCache(capacity):
+    cache = OrderedDict()
+    
+    Get(key):
+        if key not in cache:
+            return -1
+        Move key to end of cache
+        return cache[key]
+    
+    Put(key, value):
+        if key in cache:
+            Move key to end of cache
+        elif len(cache) == capacity:
+            Remove oldest item (cache.popitem(last=False))
+        cache[key] = value
+```
+📌 **Time Complexity**: **O(1) for both get and put** using an **OrderedDict**.
 
-#### 2.2: **Huffman Coding**
-- **Problem**: Construct a binary tree to encode characters with variable-length binary strings based on their frequencies.
-- **Input**: A list of character-frequency pairs.
-- **Output**: A dictionary mapping each character to its binary code.
+#### **3. Least Frequently Used (LFU)**
+- Removes the **least frequently accessed item**.
+- **More accurate than LRU** but **complex to implement**.
 
-- **Steps**:
-  1. Use a priority queue (min-heap) to iteratively merge the two smallest frequencies.
-  2. Construct the binary tree.
-  3. Traverse the tree to generate codes.
-
-- **Example**:
-  ```python
-  frequencies = {'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}
-  codes = huffman_coding(frequencies)
-  print("Huffman Codes:", codes)
-  ```
-
----
-
-#### 2.3: **Fractional Knapsack Problem**
-- **Problem**: Given items with weights and values, maximize the value of items in a knapsack with a weight limit. Fractional items are allowed.
-- **Input**: Lists of values, weights, and a knapsack weight limit.
-- **Output**: Maximum value and the fractions of items included.
-
-- **Steps**:
-  1. Calculate the value-to-weight ratio for each item.
-  2. Sort items by the ratio in descending order.
-  3. Fill the knapsack greedily by selecting items or fractions of items.
-
-- **Example**:
-  ```python
-  values = [60, 100, 120]
-  weights = [10, 20, 30]
-  capacity = 50
-  result = fractional_knapsack(values, weights, capacity)
-  print("Maximum value:", result)
-  ```
-
----
-
-### Task 3: Analyze Greedy Algorithm Properties
-1. For each problem, explain:
-   - Why the greedy approach works.
-   - How the greedy-choice property and optimal substructure apply.
-   - Any limitations of the approach.
-
-2. Example for the **Activity Selection Problem**:
-   - **Greedy-choice property**: Always select the activity that finishes the earliest, as it leaves the most room for other activities.
-   - **Optimal substructure**: The problem reduces to smaller subproblems after selecting an activity.
+📌 **Use Cases of Caching Algorithms**:
+- **Operating systems (virtual memory management)**.
+- **Web browsers (page caching)**.
+- **Databases (query optimization)**.
 
 ---
 
-### Bonus Task: Coin Change Problem
-- **Problem**: Find the minimum number of coins needed to make a given amount using denominations `[d1, d2, ..., dn]`.
-- **Input**: A list of coin denominations and a target amount.
-- **Output**: The number of coins and their denominations.
-
-- **Steps**:
-  1. Sort denominations in descending order.
-  2. Use the largest denomination repeatedly until the amount is exhausted.
-  3. If no solution exists, print an error message.
-
-- **Example**:
-  ```python
-  denominations = [1, 5, 10, 25]
-  amount = 63
-  result = coin_change(denominations, amount)
-  print("Coins used:", result)
-  ```
+## **Learning Outcomes**
+By the end of this module, you should be able to:
+✔ Design **greedy algorithms** for various problems.  
+✔ Solve the **interval scheduling problem** optimally.  
+✔ Implement **caching strategies** such as **LRU, LFU, and Optimal Page Replacement**.
 
 ---
 
-## Submission Instructions
-1. Save your implementation in `greedy_algorithms.py`.
-2. Include your analysis of greedy algorithm properties in a file named `analysis.txt`.
-3. Attach any visualizations or additional test cases in a separate folder.
-4. Submit all files on Canvas by the deadline.
+## **Resources**
+- 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
+- 📖 **Introduction to Algorithms (CLRS)** - Chapter on **Greedy Algorithms**.
+- 🔗 **LeetCode Greedy Problems**: [LeetCode](https://leetcode.com/tag/greedy/)
+- 🔗 **Cache Replacement Policies**: [GeeksforGeeks](https://www.geeksforgeeks.org/page-replacement-algorithms/)
 
 ---
 
-## Additional Resources
-- [Greedy Algorithm Paradigm](https://en.wikipedia.org/wiki/Greedy_algorithm)
-- [Huffman Coding Algorithm](https://www.geeksforgeeks.org/greedy-algorithms-set-3-huffman-coding/)
-- [Fractional Knapsack Problem](https://www.geeksforgeeks.org/fractional-knapsack-problem/)
-
----
-
-## Notes
-- Test each function with multiple test cases, including edge cases.
-- Include comments in your code explaining your logic and time complexity.
-- Reach out to the TA or instructor for any clarifications.
+## **Exercises**
+1. Implement **Interval Scheduling** and test with different datasets.
+2. Implement **LRU and LFU caching** with different page requests.
+3. Solve **"Activity Selection Problem"** using **Greedy Strategy**.
+4. Compare **LRU, LFU, and Optimal Caching** in terms of performance.
