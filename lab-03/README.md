@@ -1,184 +1,174 @@
-
-# Lab 03: Graph Traversals
+# Graph Theory: Basic Definitions, Connectivity, and Traversal
 
 ## Overview
-In **Lab 03: Graph Traversals**, you will explore how to navigate graphs using fundamental traversal techniques: **Breadth-First Search (BFS)** and **Depth-First Search (DFS)**. You will implement these algorithms, analyze their behavior, and apply them to solve practical problems.
+This module explores **Graph Theory** concepts and their applications in **Algorithm Design**. You will learn how to represent graphs, traverse them efficiently, test for bipartiteness, and compute topological ordering in Directed Acyclic Graphs (DAGs).
+
+## Topics Covered
+
+### 1. **Basic Definitions and Applications**
+- **Graph Representation**:
+  - **Adjacency List** (Efficient for sparse graphs).
+  - **Adjacency Matrix** (Fast edge lookup for dense graphs).
+  
+- **Types of Graphs**:
+  - **Undirected vs. Directed Graphs**.
+  - **Weighted vs. Unweighted Graphs**.
+  - **DAGs (Directed Acyclic Graphs)**.
+
+- **Applications**:
+  - **Social networks** (Facebook friends graph).
+  - **Road navigation** (Google Maps shortest path).
+  - **Scheduling tasks** (DAGs with dependencies).
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the structure of graphs (directed, undirected, weighted, unweighted).
-2. Learn and implement **Breadth-First Search (BFS)**.
-3. Learn and implement **Depth-First Search (DFS)** (recursive and iterative).
-4. Compare BFS and DFS in terms of functionality and performance.
-5. Apply graph traversals to solve real-world problems (e.g., shortest path, connected components).
+### 2. **Graph Connectivity and Traversal**
+Graph traversal helps in exploring all nodes of a graph. Two key techniques are **Depth-First Search (DFS)** and **Breadth-First Search (BFS)**.
 
----
+#### **Depth-First Search (DFS)**
+- Explores as deep as possible before backtracking.
+- Uses **recursion** (or an explicit **stack** for iterative implementation).
 
-## Lab Outline
-
-### 1. **Introduction to Graphs**
-   - Types of graphs: Directed, undirected, weighted, unweighted.
-   - Representations of graphs:
-     - Adjacency List.
-     - Adjacency Matrix.
-   - Key terminology: Vertices, edges, paths, cycles, connected components.
-
-### 2. **Breadth-First Search (BFS)**
-   - Algorithm overview:
-     - Traverses level by level.
-     - Utilizes a **queue** for exploration.
-   - Common applications:
-     - Finding the shortest path in an unweighted graph.
-     - Checking bipartite graphs.
-
-### 3. **Depth-First Search (DFS)**
-   - Algorithm overview:
-     - Explores as far as possible along each branch before backtracking.
-     - Can be implemented recursively or using a **stack**.
-   - Common applications:
-     - Detecting cycles.
-     - Finding connected components.
-
----
-
-## Getting Started
-
-### Prerequisites
-- Ensure Python (>= 3.8) is installed.
-- Install `matplotlib` and `networkx` for graph visualization:
-  ```bash
-  pip install matplotlib networkx
-  ```
-
-### Files Provided
-1. `graph_traversals.py` - A template file for implementing graph traversal algorithms.
-2. `sample_graph.json` - Example input graph in JSON format.
-3. `README.md` - This instruction file.
-
----
-
-## Tasks
-
-### Task 1: Graph Representation
-1. Open `graph_traversals.py`.
-2. Implement a `Graph` class with:
-   - `add_vertex(vertex)`: Adds a vertex to the graph.
-   - `add_edge(v1, v2, weight=1)`: Adds an edge between `v1` and `v2`. If the graph is undirected, ensure symmetry.
-   - `display()`: Prints or visualizes the graph using `networkx`.
-
-   Example:
-   ```python
-   g = Graph()
-   g.add_vertex('A')
-   g.add_vertex('B')
-   g.add_edge('A', 'B')
-   g.display()
-   ```
-
----
-
-### Task 2: Implement BFS
-1. Implement the `bfs(start_vertex)` method in the `Graph` class:
-   - Input: Starting vertex.
-   - Output: List of vertices in the order they are visited.
-
-   Example:
-   ```python
-   g.bfs('A')
-   ```
-
-2. Analyze its time complexity for adjacency list and adjacency matrix representations.
-
----
-
-### Task 3: Implement DFS
-1. Implement the `dfs_recursive(start_vertex, visited=None)` method:
-   - Input: Starting vertex.
-   - Output: List of vertices in the order they are visited.
-   
-2. Implement the `dfs_iterative(start_vertex)` method:
-   - Input: Starting vertex.
-   - Output: List of vertices in the order they are visited.
-
-3. Compare the recursive and iterative approaches.
-
----
-
-### Task 4: Application of Graph Traversals
-#### 4.1: Connected Components
-1. Write a function `find_connected_components()` to identify all connected components in an undirected graph.
-2. Test with a graph containing multiple disconnected subgraphs.
-
-#### 4.2: Shortest Path (Unweighted)
-1. Use BFS to implement `shortest_path(start_vertex, end_vertex)` to find the shortest path between two vertices.
-2. Output:
-   - The shortest path as a list of vertices.
-   - The path length.
-
-#### 4.3: Cycle Detection
-1. Use DFS to implement `has_cycle()` to detect cycles in a graph.
-
----
-
-## Bonus Task: Graph Visualization
-1. Use `networkx` and `matplotlib` to visualize graphs.
-   - Highlight BFS and DFS traversals on the graph.
-2. Example visualization:
-   - Nodes visited during BFS/DFS in a different color.
-
-   Example code:
-   ```python
-   import networkx as nx
-   import matplotlib.pyplot as plt
-
-   def visualize_graph(graph, traversal=None):
-       G = nx.Graph()
-       for vertex, neighbors in graph.items():
-           for neighbor in neighbors:
-               G.add_edge(vertex, neighbor)
-
-       pos = nx.spring_layout(G)
-       nx.draw(G, pos, with_labels=True, node_color='lightblue')
-       if traversal:
-           nx.draw_networkx_nodes(G, pos, nodelist=traversal, node_color='orange')
-       plt.show()
-   ```
-
----
-
-## Sample Input Graph
-`sample_graph.json`:
-```json
-{
-  "A": ["B", "C"],
-  "B": ["A", "D", "E"],
-  "C": ["A", "F"],
-  "D": ["B"],
-  "E": ["B", "F"],
-  "F": ["C", "E"]
-}
+**Pseudocode for DFS (Recursive)**:
+```
+DFS(graph, node, visited):
+    visited[node] = True
+    for neighbor in graph[node]:
+        if not visited[neighbor]:
+            DFS(graph, neighbor, visited)
 ```
 
+**Pseudocode for DFS (Iterative using Stack)**:
+```
+DFS(graph, start):
+    stack = [start]
+    visited = set()
+    
+    while stack is not empty:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph[node]:
+                stack.push(neighbor)
+```
+
+📌 **Use cases**: Cycle detection, connectivity check, topological sorting.
+
 ---
 
-## Submission Instructions
-1. Save your implementation in `graph_traversals.py`.
-2. Include results (e.g., connected components, shortest paths) in a file named `results.txt`.
-3. Attach visualizations (if any) as a PDF or image files.
-4. Submit all files on Canvas by the deadline.
+#### **Breadth-First Search (BFS)**
+- Explores all neighbors first before moving deeper.
+- Uses a **queue** (FIFO order).
+
+**Pseudocode for BFS**:
+```
+BFS(graph, start):
+    queue = [start]
+    visited = set([start])
+
+    while queue is not empty:
+        node = queue.pop(0)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+```
+
+📌 **Use cases**: Finding the shortest path in **unweighted** graphs.
 
 ---
 
-## Additional Resources
-- [Graph Basics](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))
-- Python `networkx` library: [https://networkx.org/](https://networkx.org/)
-- Graph traversal algorithms: [https://www.geeksforgeeks.org/](https://www.geeksforgeeks.org/)
+### 3. **Testing Bipartiteness**
+A graph is **bipartite** if it can be colored using **two colors** such that no two adjacent nodes have the same color.
+
+#### **Algorithm (BFS-based Two-Coloring)**
+1. Assign one node **color 1**.
+2. Assign its neighbors **color 2**.
+3. Continue BFS. If a node encounters a neighbor of the same color, the graph is **not bipartite**.
+
+**Pseudocode**:
+```
+CheckBipartite(graph, n):
+    colors = [-1] * n  # -1: Unvisited, 0: First color, 1: Second color
+    
+    for node in range(n):  # Ensure all components are checked
+        if colors[node] == -1:
+            queue = [node]
+            colors[node] = 0
+            
+            while queue:
+                u = queue.pop(0)
+                for v in graph[u]:
+                    if colors[v] == -1:  # If unvisited, assign opposite color
+                        colors[v] = 1 - colors[u]
+                        queue.append(v)
+                    elif colors[v] == colors[u]:  # Conflict found
+                        return False
+    return True
+```
+📌 **Use case**: **Matching problems** (e.g., job assignments, team formation).
 
 ---
 
-## Notes
-- Test all functions with different types of graphs (directed, undirected, cyclic, acyclic).
-- Add comments in your code explaining the logic and complexity.
-- Contact the TA or instructor if you need assistance.
+### 4. **DAGs and Topological Ordering**
+A **DAG** is a **Directed Acyclic Graph**. It allows **topological sorting**, where nodes appear **before** their dependencies.
+
+#### **Algorithm 1: Kahn’s Algorithm (BFS-based)**
+1. Compute **in-degrees** of all nodes.
+2. Start with **zero in-degree nodes**.
+3. Remove nodes one by one, updating in-degrees.
+
+**Pseudocode**:
+```
+TopologicalSort(graph, n):
+    in_degree = [0] * n
+    for u in graph:
+        for v in graph[u]:
+            in_degree[v] += 1
+
+    queue = [node for node in range(n) if in_degree[node] == 0]
+    topo_order = []
+
+    while queue:
+        node = queue.pop(0)
+        topo_order.append(node)
+        for neighbor in graph[node]:
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+                
+    if len(topo_order) == n:
+        return topo_order  # Valid order
+    else:
+        return "Cycle detected, no valid topological ordering"
+```
+
+📌 **Use cases**: **Task Scheduling**, **Compiling Dependencies**.
+
+---
+
+## **Learning Outcomes**
+By the end of this module, you should be able to:
+✔ Implement **DFS and BFS** for **graph traversal**.  
+✔ Check whether a graph is **bipartite** using **two-coloring**.  
+✔ Construct a **topological order** for a **DAG** and apply it to real-world problems.  
+
+---
+
+## **Resources**
+- 📖 **CLRS - Introduction to Algorithms** (Graph Algorithms).
+- 📖 **Competitive Programming Handbook** (Graph Traversal).
+- 🔗 **LeetCode Graph Problems**: [LeetCode](https://leetcode.com/tag/graph/)
+- 🔗 **Codeforces Graph Section**: [Codeforces](https://codeforces.com/blog/entry/55219)
+
+---
+
+## **Exercises**
+1. **Implement DFS and BFS** for a given **undirected graph**.
+2. **Check if a given graph is bipartite**.
+3. **Find the topological order** of a DAG using **both DFS and Kahn’s algorithm**.
+4. **Solve a scheduling problem** using **topological sorting**.
+
+🚀 **Happy Coding!**
+
+
