@@ -1,174 +1,221 @@
-# Final Exam Review: Topics and Preparation Guide
+# 📚 Final Exam Revision: Algorithm Design (Post-Midterm Topics)
 
-## Overview
-This document provides a comprehensive guide to prepare for the **Final Exam**, which covers topics from **Week 9 to Week 15**. The guide includes an outline of lectures and labs, preparation tips, and additional resources for mastering key concepts.
-
----
-
-## Topics by Week
-
-### **Week 9: Introduction to Dynamic Programming**
-- **Lecture 15: Dynamic Programming I (Principles of DP)**:
-  - Characteristics of DP:
-    - Optimal substructure.
-    - Overlapping subproblems.
-  - Steps for solving DP problems:
-    - Define subproblems.
-    - Recursive relation.
-    - Base cases.
-    - Iterative implementation.
-
-- **Lecture 16: Applications of DP**:
-  - Weighted interval scheduling:
-    - Problem definition and solution using DP.
-  - Segmented least squares problem.
-
-- **Lab 8: Solving Basic DP Problems**:
-  - Practice problems:
-    - Fibonacci numbers.
-    - Weighted interval scheduling.
-    - Rod cutting problem.
+This document summarizes key topics covered **after the midterm**, including **Dynamic Programming, Graph Algorithms, Network Flows, NP-Completeness, and Approximation Algorithms**. Each section includes definitions, pseudocode, applications, and practice problems.
 
 ---
 
-### **Week 10: Advanced Dynamic Programming**
-- **Lecture 17: Dynamic Programming II (Subset Sums, Knapsacks)**:
-  - Subset sum problem:
-    - Formulation and implementation.
-  - Knapsack problems:
-    - 0/1 Knapsack.
-    - Fractional Knapsack (comparison with greedy).
+## **1. Principles of Dynamic Programming**
+### **Definition**
+- **Dynamic Programming (DP)** solves problems by **breaking them into subproblems** and using their solutions to build the final answer.
+- **Two approaches**:
+  1. **Top-down (Memoization)**
+  2. **Bottom-up (Tabulation)**
 
-- **Lecture 18: Applications of DP**:
-  - Sequence alignment:
-    - Edit distance calculation.
-  - Shortest path in weighted graphs:
-    - Bellman-Ford algorithm.
+### **Example: Fibonacci Numbers**
+```python
+def fibonacci(n):
+    dp = [0] * (n+1)
+    dp[1] = 1
+    for i in range(2, n+1):
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
+```
 
-- **Lab 9: Advanced DP Problems**:
-  - Practice problems:
-    - 0/1 Knapsack implementation.
-    - Edit distance computation.
-    - Longest increasing subsequence.
-
----
-
-### **Week 11: Network Flow**
-- **Lecture 19: Network Flow**:
-  - Max-flow problem:
-    - Definitions and applications.
-  - Ford-Fulkerson algorithm:
-    - Augmenting path method.
-    - Residual graphs.
-
-- **Lab 10: Implementing Max-flow Algorithms**:
-  - Implementation of Ford-Fulkerson algorithm.
-  - Practice problems:
-    - Solving max-flow for given networks.
-    - Applications in bipartite matching.
+✅ **Used in:** Scheduling, shortest paths, bioinformatics.
 
 ---
 
-### **Week 12: Intractability Basics**
-- **Lecture 21: Intractability I (Polynomial-time Reductions)**:
-  - Concept of reductions.
-  - Examples of polynomial-time reductions.
+## **2. Weighted Interval Scheduling**
+### **Problem**
+- Given `n` intervals `(s_i, f_i, v_i)`, find a **set of non-overlapping intervals** that **maximizes the sum of their values**.
 
-- **Lecture 22: Constraint Satisfaction Problems (CSPs)**:
-  - Problem definition and examples.
-  - Backtracking and constraint propagation.
+### **DP Recurrence**
+```
+OPT(j) = max(v_j + OPT(p(j)), OPT(j-1))
+```
+where `p(j)` is the latest interval that does not overlap.
 
-- **Lab 11: NP Problems and Polynomial-time Reductions**:
-  - Practice problems:
-    - Reductions between problems.
-    - Solving simple CSPs.
+✅ **Used in:** Job scheduling, resource allocation.
 
 ---
 
-### **Week 13: Understanding NP-completeness**
-- **Lecture 23: Intractability II**:
-  - Complexity classes:
-    - P, NP, NP-complete, co-NP, NP-hard.
-  - Examples of NP-complete problems:
-    - SAT, Vertex Cover, Traveling Salesman.
+## **3. Segmented Least Squares**
+### **Problem**
+- Given `n` points, fit them with the **minimum number of line segments** to minimize the total error.
 
-- **Lab 12: Discussion on NP-complete Problems**:
-  - Group discussions on classic NP-complete problems.
-  - Exercises on identifying NP-complete problems.
+### **DP Approach**
+```
+E(i, j) = error of fitting points i to j in a single segment
+OPT(j) = min {OPT(i) + E(i+1, j) + C} for i < j
+```
+where `C` is the penalty for adding a new segment.
 
----
-
-### **Week 14: Approximation Algorithms**
-- **Lecture 25: Approximation Algorithms**:
-  - Introduction to approximation techniques.
-  - Load balancing:
-    - Problem and approximation analysis.
-  - Linear programming (LP) rounding.
-
-- **Lecture 26: Local Search Heuristics**:
-  - Hill climbing.
-  - Applications in TSP and vertex cover.
-
-- **Lab 13: Approximation and Local Search Techniques**:
-  - Implementation of approximation algorithms.
-  - Exercises on local search strategies.
+✅ **Used in:** Data compression, curve fitting.
 
 ---
 
-### **Week 15: Randomized Algorithms**
-- **Lecture 27: Randomized Algorithms I**:
-  - Contention resolution:
-    - Applications in resource allocation.
-  - Global min cut using randomized contraction.
+## **4. Subset Sums and Knapsacks**
+### **0/1 Knapsack Problem**
+- Given `n` items `(value, weight)`, maximize **total value** under a weight limit `W`.
 
-- **Lecture 28: Randomized Algorithms II**:
-  - Universal hashing:
-    - Definitions and benefits.
-  - Chernoff bounds:
-    - Applications in probabilistic analysis.
-
-- **Lab 14: Randomized Algorithms Implementation**:
-  - Practice problems:
-    - Min cut using randomized contraction.
-    - Hashing and load balancing simulations.
+### **DP Recurrence**
+```
+dp[i][w] = max(dp[i-1][w], value_i + dp[i-1][w - weight_i])
+```
+✅ **Used in:** Resource allocation, cryptography.
 
 ---
 
-## Preparation Tips
-1. **Review Lecture Notes**:
-   - Understand theoretical foundations and algorithmic paradigms.
-   - Focus on problem-solving techniques discussed in class.
+## **5. Sequence Alignment**
+### **Problem**
+- Align two DNA sequences by **minimizing edit distance**.
 
-2. **Practice Lab Problems**:
-   - Redo implementation exercises from labs.
-   - Modify solutions to handle edge cases.
-
-3. **Work on Additional Problems**:
-   - Use competitive programming platforms:
-     - LeetCode.
-     - Codeforces.
-     - GeeksforGeeks.
-
-4. **Summarize Key Concepts**:
-   - Create cheat sheets for:
-     - Algorithm steps.
-     - Complexity classes.
-     - Dynamic programming principles.
-
-5. **Group Discussions**:
-   - Collaborate with peers to discuss complex topics like NP-completeness.
+### **DP Recurrence**
+```
+dp[i][j] = min(
+    dp[i-1][j-1] + cost(match/mismatch),
+    dp[i-1][j] + cost(delete),
+    dp[i][j-1] + cost(insert)
+)
+```
+✅ **Used in:** Bioinformatics, text similarity.
 
 ---
 
-## Recommended Resources
-1. **Books**:
-   - "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein.
-   - "Algorithm Design" by Jon Kleinberg and Éva Tardos.
+## **6. Max-Flow Problem & Ford-Fulkerson Algorithm**
+### **Definition**
+- Given a **directed graph** where edges have **capacities**, find the **maximum flow from source to sink**.
 
-2. **Online Tutorials**:
-   - [GeeksforGeeks - Algorithms](https://www.geeksforgeeks.org/)
-   - [CP-Algorithms](https://cp-algorithms.com/)
+### **Algorithm (Ford-Fulkerson)**
+```
+While there exists an augmenting path:
+    Find the path with BFS/DFS
+    Augment flow along the path
+    Update residual capacities
+```
 
-3. **Video Lectures**:
-   - [MIT OpenCourseWare - Advanced Algorithms](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-854j-advanced-algorithms-fall-2005/)
-   - [YouTube - Abdul Bari](https://www.youtube.com/user/abdulbarikcs)
+✅ **Used in:** Network routing, image segmentation.
+
+---
+
+## **7. Maximum Flows and Minimum Cuts**
+### **Definition**
+- The **max-flow min-cut theorem** states:
+  ```
+  Maximum flow = Minimum capacity cut
+  ```
+- Find **min-cut** by identifying **full edges in the residual graph**.
+
+✅ **Used in:** Image processing, bipartite matching.
+
+---
+
+## **8. NP, NP-Completeness, and co-NP**
+### **Definition**
+- **P:** Problems solvable in polynomial time.
+- **NP:** Problems verifiable in polynomial time.
+- **NP-Complete (NPC):** Hardest problems in NP.
+- **co-NP:** Problems whose complements are in NP.
+
+✅ **Used in:** Cryptography, optimization.
+
+---
+
+## **9. Polynomial-Time Reductions**
+### **Definition**
+- **A problem `A` reduces to `B` if a solution to `B` gives a solution to `A`.**
+
+✅ **Used in:** Proving NP-Completeness.
+
+---
+
+## **10. Approximation Algorithms**
+### **Load Balancing**
+- Assign `n` jobs to `m` machines **randomly** to balance load.
+```
+GreedyLoadBalancing():
+    Assign each job to the least-loaded machine
+```
+✅ **Guarantees `2 - 1/m` approximation**.
+
+### **LP Rounding for Knapsack**
+- Solve **fractional knapsack** with **linear programming**, then round up.
+
+✅ **Used in:** Scheduling, resource allocation.
+
+---
+
+## **11. Graph Coloring & Partitioning**
+### **Problem**
+- Assign **minimum colors** to a graph **such that no adjacent nodes share the same color**.
+
+### **Greedy Algorithm**
+```
+for each vertex:
+    Assign the smallest available color not used by neighbors
+```
+
+✅ **Used in:** Scheduling, register allocation.
+
+---
+
+## **12. Universal Hashing**
+- **Randomized hashing method** to minimize collisions.
+- Example:
+```
+h(x) = (ax + b) mod p mod m
+```
+✅ **Used in:** Data structures, cryptography.
+
+---
+
+## **13. Chernoff Bounds**
+- **Probabilistic bound** on sum of independent random variables.
+
+✅ **Used in:** Load balancing, randomized algorithms.
+
+---
+
+## **14. The Stable Matching Problem**
+### **Problem**
+- Given `n` men and `n` women with preferences, find a **stable matching** (no blocking pairs).
+
+### **Gale-Shapley Algorithm**
+```
+While unmatched men exist:
+    Pick an unmatched man m
+    Propose to highest-ranked woman w
+    If w prefers m over current partner, w switches
+```
+✅ **Guarantees a stable matching in `O(n^2)`**.
+
+---
+
+## **15. Final Exam Practice Problems**
+1. **Implement weighted interval scheduling using DP**.
+2. **Solve the max-flow problem on a given network**.
+3. **Prove NP-completeness of 3-SAT**.
+4. **Implement stable matching using Gale-Shapley**.
+5. **Use LP rounding to approximate knapsack**.
+6. **Analyze load balancing with Chernoff Bounds**.
+
+---
+
+## **16. Summary Table**
+| **Topic** | **Algorithm** | **Use Case** |
+|-----------|--------------|--------------|
+| **Dynamic Programming** | Knapsack, Sequence Alignment | Optimization, Bioinformatics |
+| **Max-Flow** | Ford-Fulkerson | Network Routing |
+| **NP-Completeness** | 3-SAT, Reduction Proofs | Complexity Theory |
+| **Approximation** | Load Balancing, LP Rounding | Resource Allocation |
+| **Stable Matching** | Gale-Shapley | Marriage Matching, HR Systems |
+
+---
+
+## **17. References**
+- 📖 **Algorithm Design – Kleinberg & Tardos**
+- 📖 **Introduction to Algorithms – Cormen et al.**
+- 📖 **Computational Complexity – Papadimitriou**
+- 🔗 [NP-Completeness (Wikipedia)](https://en.wikipedia.org/wiki/NP-completeness)
+
+🚀 **Good luck with your final exam!**

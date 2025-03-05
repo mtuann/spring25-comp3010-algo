@@ -180,4 +180,3 @@ F -> 01
 # **Resources**
 - 📖 **Introduction to Algorithms (CLRS)** - MST & Huffman Codes.
 - 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
-- 🔗 **MST & Huffman Visualization**: [Graph Visualizer](https://visualgo.net/en)

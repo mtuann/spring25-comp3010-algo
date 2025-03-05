@@ -169,6 +169,4 @@ By the end of this module, you should be able to:
 3. **Find the topological order** of a DAG using **both DFS and Kahn’s algorithm**.
 4. **Solve a scheduling problem** using **topological sorting**.
 
-🚀 **Happy Coding!**
-
 

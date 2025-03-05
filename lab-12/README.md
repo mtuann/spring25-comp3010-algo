@@ -1,187 +1,130 @@
-# Lab 12: P vs NP
+# Definition of NP, NP-Completeness, co-NP, Asymmetry of NP
 
-## Overview
-This lab explores one of the most fundamental questions in computer science: **P vs NP**. The focus is on understanding the difference between P and NP problems, the significance of NP-completeness, and practical approaches to identify and tackle NP problems.
-
-Through a series of tasks and examples, students will:
-1. Examine the theoretical foundations of P vs NP.
-2. Study NP-complete problems and their characteristics.
-3. Implement and analyze solutions for problems in both P and NP.
+This document covers **complexity classes**, the concept of **NP-completeness**, the **co-NP** class, and the **asymmetry of NP**. It includes definitions, examples, pseudocode, and applications.
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the concepts of P, NP, NP-complete, and NP-hard problems.
-2. Differentiate between problems in P and those in NP.
-3. Explore NP-completeness through reductions and practical examples.
-4. Implement brute-force and heuristic algorithms to solve NP-complete problems.
+## **1. Definition of NP**
+### **Complexity Classes Overview**
+- **P (Polynomial Time):** Problems that can be solved in polynomial time `O(n^k)`, where `k` is a constant.
+- **NP (Nondeterministic Polynomial Time):** Problems where a given solution can be **verified** in polynomial time.
 
----
+### **Formal Definition**
+A problem belongs to **NP** if there exists a polynomial-time algorithm that **verifies** a proposed solution.
 
-## Lab Outline
+#### **Example: Hamiltonian Cycle Problem**
+**Input:** Graph `G = (V, E)`.  
+**Output:** Does `G` contain a cycle that visits every vertex exactly once?  
+**Verification:** Given a proposed cycle, we can check if:
+- It includes all vertices.
+- Each edge exists in `G`.
+- It forms a cycle.
 
-### 1. **Introduction to P vs NP**
-- **P (Polynomial Time)**: Problems solvable in polynomial time.
-- **NP (Nondeterministic Polynomial Time)**: Problems for which solutions can be verified in polynomial time.
-- **NP-Complete Problems**: 
-  - A subset of NP problems to which any NP problem can be reduced in polynomial time.
-  - Examples: Traveling Salesperson Problem (TSP), SAT, and Knapsack.
+✅ **Verification takes O(n²), so the problem is in NP**.
 
-### 2. **Reduction and NP-Completeness**
-- Concept of reducing one problem to another in polynomial time.
-- Understanding the Cook-Levin theorem, which proves that SAT is NP-complete.
-
-### 3. **Practical Approaches to NP Problems**
-- Brute-force algorithms for small instances.
-- Approximation and heuristic algorithms for larger instances.
-
----
-
-## Tasks
-
-### Task 1: Identify P and NP Problems
-#### Objective
-Categorize the following problems as P, NP, or NP-complete:
-1. Sorting an array.
-2. Finding the shortest path in a graph.
-3. 0/1 Knapsack Problem.
-4. Boolean Satisfiability Problem (SAT).
-
-#### Instructions
-1. Write a brief explanation for each problem.
-2. Justify the categorization based on problem complexity.
-
----
-
-### Task 2: Polynomial Reduction
-#### Objective
-Perform a reduction from the 3-SAT problem to the Clique problem to understand NP-completeness.
-
-#### Instructions
-1. Study the 3-SAT problem:
-   - Input: A Boolean formula in Conjunctive Normal Form (CNF) with 3 literals per clause.
-   - Output: True if the formula is satisfiable, False otherwise.
-2. Learn about the Clique problem:
-   - Input: A graph $G$ and a number $k$.
-   - Output: True if $G$ has a clique of size $k$.
-
-#### Implementation
-1. Write a function that transforms a 3-SAT formula into an equivalent Clique problem instance.
-2. Use the following Python template:
-
-```python
-def sat_to_clique(clauses, num_variables):
-    """
-    Convert a 3-SAT problem into a Clique problem.
-    Args:
-        clauses: List of tuples representing 3-SAT clauses.
-        num_variables: Total number of variables in the formula.
-    Returns:
-        graph: Adjacency matrix representing the graph.
-        k: The size of the clique.
-    """
-    # Example logic to construct graph
-    graph = {}
-    k = len(clauses)
-    # Add logic for reduction
-    return graph, k
+### **Pseudocode: Hamiltonian Cycle Verification**
 ```
-
----
-
-### Task 3: Solve the SAT Problem
-#### Objective
-Implement a brute-force solution for the SAT problem.
-
-#### Problem
-Input: A Boolean formula in CNF.  
-Output: True if the formula is satisfiable, otherwise False.
-
-#### Implementation
-```python
-from itertools import product
-
-def is_satisfiable(clauses, num_variables):
-    """
-    Brute-force solution to SAT.
-    Args:
-        clauses: List of tuples representing the clauses.
-        num_variables: Number of variables in the formula.
-    Returns:
-        True if satisfiable, False otherwise.
-    """
-    for assignment in product([True, False], repeat=num_variables):
-        if all(any(assignment[abs(lit) - 1] == (lit > 0) for lit in clause) for clause in clauses):
-            return True
-    return False
-
-# Example usage
-clauses = [(-1, 2, 3), (1, -2, 3), (-1, -2, -3)]
-num_variables = 3
-print(is_satisfiable(clauses, num_variables))
+Verify_Hamiltonian_Cycle(G, cycle):
+    if length(cycle) ≠ |V|:
+        return False
+    for i in range(|V|):
+        if (cycle[i], cycle[i+1]) not in E:
+            return False
+    return True
 ```
+✅ **Time Complexity:** O(n²).
 
 ---
 
-### Task 4: Approximation Algorithm for Vertex Cover
-#### Objective
-Solve the Vertex Cover problem using an approximation algorithm.
+## **2. NP-Completeness**
+### **Definition**
+A problem **X** is **NP-complete** if:
+1. `X` is in NP (**Verifiable in polynomial time**).
+2. Every problem in NP **reduces to X in polynomial time** (NP-hardness).
 
-#### Problem
-Input: A graph represented as an adjacency list.  
-Output: A vertex cover of the graph.
+### **Why NP-Completeness Matters?**
+- If **any** NP-complete problem is solved in polynomial time, then **P = NP**.
+- **Key open question in CS:** **Does P = NP?**
 
-#### Implementation
-```python
-def vertex_cover_approx(graph):
-    """
-    Approximation algorithm for Vertex Cover.
-    Args:
-        graph: Adjacency list of the graph.
-    Returns:
-        A set representing the vertex cover.
-    """
-    cover = set()
-    edges = set((u, v) for u in graph for v in graph[u])
-    
-    while edges:
-        u, v = edges.pop()
-        cover.update([u, v])
-        edges = {e for e in edges if u not in e and v not in e}
-    
-    return cover
+### **Examples of NP-Complete Problems**
+1. **SAT (Boolean Satisfiability Problem)**
+   - Given a Boolean formula, determine if there exists an assignment of variables that makes the formula true.
+   - **First known NP-complete problem** (Cook’s Theorem).
+   
+2. **Traveling Salesman Problem (TSP)**
+   - Given `n` cities and distances, find the shortest tour visiting all cities exactly once.
 
-# Example usage
-graph = {
-    0: [1, 2],
-    1: [0, 2],
-    2: [0, 1, 3],
-    3: [2]
-}
-print(vertex_cover_approx(graph))
+3. **3-SAT Reduction to Independent Set**
+   - Convert a SAT formula into a graph where satisfying assignments correspond to independent sets.
+
+### **Pseudocode: SAT Verification**
 ```
+Verify_SAT(Formula, Assignment):
+    for each clause in Formula:
+        if no literal in clause is satisfied by Assignment:
+            return False
+    return True
+```
+✅ **Time Complexity:** O(nm) (where `n` is variables, `m` is clauses).
 
 ---
 
-## Additional Exercises
-1. Solve the Hamiltonian Path problem using backtracking.
-2. Write a function to reduce the Hamiltonian Path problem to TSP.
+## **3. co-NP**
+### **Definition**
+- **co-NP** consists of problems where **NO-instance** can be verified in polynomial time.
+- A problem `X` is in **co-NP** if its complement (`not X`) is in **NP**.
+
+### **Example: Composite Numbers**
+- **NP Problem:** Checking if a number is **prime** (difficult to verify directly).
+- **co-NP Problem:** Checking if a number is **composite** (easy to verify with a factor).
+
+### **NP vs co-NP**
+| **Class**  | **Verification** |
+|------------|----------------|
+| **NP**     | Fast verification of **YES** instances |
+| **co-NP**  | Fast verification of **NO** instances |
+
+#### **Does NP = co-NP?**
+- **Unknown** (similar to P vs NP).
+- Many believe **NP ≠ co-NP**.
+- **Factoring** is in **co-NP**, but unknown if it's in NP.
 
 ---
 
-## Submission Instructions
-1. Submit the following files:
-   - `problem_classification.txt`: Categorization of problems in Task 1.
-   - `sat_to_clique.py`: Implementation of polynomial reduction.
-   - `sat_solver.py`: SAT problem solver.
-   - `vertex_cover.py`: Approximation algorithm for Vertex Cover.
-2. Ensure all code is well-commented and properly structured.
-3. Submit via Canvas by the due date.
+## **4. Asymmetry of NP**
+### **Key Observation**
+- Many **NP problems** don’t have known polynomial-time solutions.
+- **co-NP problems** often behave differently than NP problems.
+- **Example:** If SAT is in P, then SAT’s complement (TAUT) is also in P.
+
+### **Open Problems**
+1. **Does NP = co-NP?**  
+   - If `X` is NP-complete, then `not X` is likely not in NP.
+2. **If P ≠ NP, is there a problem in NP but not in P or NP-complete?**  
+   - **Example:** Factoring is in NP, but not known to be NP-complete.
 
 ---
 
-## Additional Resources
-- [P vs NP Problem (Wikipedia)](https://en.wikipedia.org/wiki/P_versus_NP_problem)
-- [Understanding NP-Completeness](https://www.geeksforgeeks.org/np-completeness-set-1/)
-- [Cook-Levin Theorem](https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem)
+## **5. Summary Table**
+| **Concept**              | **Definition** | **Examples** |
+|--------------------------|---------------|-------------|
+| **P**                    | Solvable in polynomial time | Sorting, Shortest Path |
+| **NP**                   | Solution verifiable in polynomial time | SAT, Hamiltonian Cycle |
+| **NP-Complete**          | Hardest problems in NP | 3-SAT, TSP, Vertex Cover |
+| **co-NP**                | Problems where **NO** can be verified in poly-time | Composite Number |
+| **Asymmetry of NP**      | Some problems may be in NP but not in co-NP | Open Question |
+
+---
+
+## **6. Practice Problems**
+1. Prove that **3-SAT is NP-complete**.
+2. Verify if a given **TSP tour** is correct in polynomial time.
+3. Show that **Factoring is in co-NP**.
+4. If SAT is in P, prove that **TAUT is in P**.
+
+---
+
+## **7. References**
+- 📖 **Introduction to Algorithms – CLRS**.
+- 📖 **Computers and Intractability – Garey & Johnson**.
+- 🔗 [P vs NP Problem](https://www.claymath.org/wp-content/uploads/2022/06/pvsnp.pdf).

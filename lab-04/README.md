@@ -130,8 +130,7 @@ By the end of this module, you should be able to:
 ## **Resources**
 - 📖 **Algorithm Design** - Jon Kleinberg & Éva Tardos.
 - 📖 **Introduction to Algorithms (CLRS)** - Chapter on **Greedy Algorithms**.
-- 🔗 **LeetCode Greedy Problems**: [LeetCode](https://leetcode.com/tag/greedy/)
-- 🔗 **Cache Replacement Policies**: [GeeksforGeeks](https://www.geeksforgeeks.org/page-replacement-algorithms/)
+- 🔗 **LeetCode Greedy Problems**: [LeetCode](https://leetcode.com/problem-list/greedy/)
 
 ---
 

@@ -1,171 +1,168 @@
-# Lab 14: Randomized Algorithms
+# Randomized Algorithms: Contention Resolution, Global Min Cut, Linearity of Expectation; Max 3-Satisfiability, Universal Hashing, Chernoff Bounds, Load Balancing
 
-## Overview
-In this lab, you will explore **randomized algorithms**, which use randomness to make decisions during execution. These algorithms are particularly useful for solving problems efficiently when deterministic methods are slow or infeasible. You'll learn about different types of randomized algorithms, their applications, and implement some of the most common ones.
-
----
-
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the concept of randomized algorithms and their classifications (Monte Carlo, Las Vegas).
-2. Learn about the trade-offs between efficiency and accuracy in randomized algorithms.
-3. Implement randomized techniques to solve real-world computational problems.
-4. Analyze the expected runtime and success probabilities of randomized algorithms.
+This document provides a structured overview of key topics in **probabilistic algorithms, combinatorial optimization, and randomized methods**. Each section includes definitions, examples, pseudocode, and applications.
 
 ---
 
-## Lab Outline
+## **1. Contention Resolution**
+### **Definition**
+- **Contention resolution** deals with allocating shared resources among competing users **without conflicts**.
+- Used in **distributed computing, scheduling, and networking**.
 
-### 1. **Introduction to Randomized Algorithms**
-- **What are randomized algorithms?**
-  Algorithms that make random choices during their execution.
-- **Types of randomized algorithms:**
-  - **Monte Carlo**: Guarantees efficiency; correctness is probabilistic.
-  - **Las Vegas**: Guarantees correctness; runtime is probabilistic.
-- **Applications:**
-  - Optimization.
-  - Probabilistic data structures (e.g., Bloom filters).
-  - Randomized graph algorithms.
-
----
-
-## Tasks
-
-### Task 1: Randomized QuickSort
-#### Objective
-Implement the **Randomized QuickSort** algorithm and analyze its expected runtime.
-
-#### Algorithm
-1. Choose a random pivot instead of a fixed pivot.
-2. Partition the array around the pivot.
-3. Recursively sort the partitions.
-
-#### Implementation
-```python
-import random
-
-def randomized_partition(arr, low, high):
-    pivot_index = random.randint(low, high)
-    arr[pivot_index], arr[high] = arr[high], arr[pivot_index]
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
-
-def randomized_quicksort(arr, low, high):
-    if low < high:
-        pivot_index = randomized_partition(arr, low, high)
-        randomized_quicksort(arr, low, pivot_index - 1)
-        randomized_quicksort(arr, pivot_index + 1, high)
-
-# Example usage
-arr = [10, 7, 8, 9, 1, 5]
-randomized_quicksort(arr, 0, len(arr) - 1)
-print("Sorted array:", arr)
+### **Randomized Backoff Algorithm (Exponential)**
 ```
-
----
-
-### Task 2: Randomized Selection
-#### Objective
-Find the $k$-th smallest element in an unsorted array using a randomized approach.
-
-#### Algorithm
-1. Choose a random pivot.
-2. Partition the array around the pivot.
-3. Recursively search in the appropriate partition.
-
-#### Implementation
-```python
-def randomized_select(arr, low, high, k):
-    if low == high:
-        return arr[low]
-    pivot_index = randomized_partition(arr, low, high)
-    rank = pivot_index - low + 1
-    if rank == k:
-        return arr[pivot_index]
-    elif k < rank:
-        return randomized_select(arr, low, pivot_index - 1, k)
-    else:
-        return randomized_select(arr, pivot_index + 1, high, k - rank)
-
-# Example usage
-arr = [3, 2, 9, 1, 7, 5]
-k = 3
-print(f"{k}-th smallest element:", randomized_select(arr, 0, len(arr) - 1, k))
+RandomizedBackoff():
+    for each process:
+        Wait for a random time `t` (exponential distribution)
+        If resource is free, acquire it
+        Else, double waiting time and retry
 ```
+✅ **Used in:** **Ethernet, Wi-Fi (CSMA/CA), and network protocols**.
+
+### **Applications**
+- **Wireless networks** (collision avoidance in CSMA/CA).
+- **Parallel computing** (task scheduling in multi-core systems).
 
 ---
 
-### Task 3: Randomized Graph Algorithm - Minimum Cut
-#### Objective
-Implement Karger's algorithm to find the **minimum cut** in an undirected graph.
+## **2. Global Min Cut**
+### **Definition**
+- Given a graph `G = (V, E)`, a **minimum cut** is a set of edges that, when removed, **disconnects the graph** with minimum weight.
 
-#### Algorithm
-1. Randomly select an edge and contract it.
-2. Repeat until only two nodes remain.
-3. The edges between the remaining nodes form the minimum cut.
-
-#### Implementation
-```python
-import random
-from collections import defaultdict
-
-def karger_min_cut(graph):
-    vertices = list(graph.keys())
-    edges = [(u, v) for u in graph for v in graph[u]]
-    while len(vertices) > 2:
-        u, v = random.choice(edges)
-        vertices.remove(v)
-        graph[u].extend(graph[v])
-        for w in graph[v]:
-            graph[w] = [u if x == v else x for x in graph[w]]
-        edges = [(x, y) for x, y in edges if x != v and y != v and x != y]
-    return len(edges)
-
-# Example usage
-graph = {
-    0: [1, 2],
-    1: [0, 2, 3],
-    2: [0, 1, 3],
-    3: [1, 2]
-}
-print("Minimum cut:", karger_min_cut(graph))
+### **Karger’s Randomized Min Cut Algorithm**
 ```
+KargerMinCut(G):
+    while |V| > 2:
+        Pick a random edge (u, v)
+        Merge u and v (contract edge)
+        Remove self-loops
+    return remaining edges as min cut
+```
+✅ **Expected time complexity:** `O(n^2 log n)`
+
+### **Applications**
+- **Network reliability analysis**
+- **Graph partitioning**
 
 ---
 
-## Additional Exercises
-1. Implement a Monte Carlo algorithm to estimate $\pi$ using random sampling.
-2. Write a program to simulate randomized load balancing in a distributed system.
-3. Extend Karger's algorithm to run multiple trials and return the smallest cut.
+## **3. Linearity of Expectation**
+### **Definition**
+- If `X` and `Y` are two random variables, then:
+  ```
+  E[X + Y] = E[X] + E[Y]
+  ```
+  even if `X` and `Y` are dependent.
+
+### **Example: Number of Empty Bins in Hashing**
+- If `n` balls are thrown into `m` bins randomly, the expected number of empty bins is:
+  ```
+  E[# empty bins] = ∑ P(bin i is empty) = m * (1 - 1/m)^n
+  ```
+✅ **Useful in:** **Algorithm analysis, probabilistic counting, randomized algorithms**.
 
 ---
 
-## Submission Instructions
-1. Submit the following files:
-   - `randomized_quicksort.py`: Randomized QuickSort implementation.
-   - `randomized_selection.py`: Randomized selection implementation.
-   - `karger_min_cut.py`: Minimum cut algorithm.
-2. Include a report (`report.pdf`) discussing:
-   - The trade-offs between deterministic and randomized algorithms.
-   - Analysis of runtimes and success probabilities.
-3. Submit via Canvas by the due date.
+## **4. Max 3-Satisfiability (MAX 3-SAT)**
+### **Definition**
+- Given a **Boolean formula** with **3 literals per clause**, find an assignment that **maximizes the number of satisfied clauses**.
+
+### **Randomized Approximation Algorithm**
+```
+MAX3SAT(Formula):
+    Assign each variable True/False randomly
+    return fraction of satisfied clauses
+```
+✅ **Guarantees:** `7/8` approximation.
+
+### **Applications**
+- **AI (constraint satisfaction problems)**
+- **Circuit design**
 
 ---
 
-## Additional Resources
-- [Randomized Algorithms (GeeksforGeeks)](https://www.geeksforgeeks.org/randomized-algorithms/)
-- [Introduction to Randomized Algorithms (MIT OpenCourseWare)](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-design-and-analysis-of-algorithms-spring-2015/)
-- [Karger's Algorithm](https://en.wikipedia.org/wiki/Karger%27s_algorithm)
+## **5. Universal Hashing**
+### **Definition**
+- A **family of hash functions** `{h: U → [m]}` is **universal** if:
+  ```
+  P(h(x) = h(y)) ≤ 1/m  for x ≠ y
+  ```
+- Ensures low probability of **collisions**.
+
+### **Construction of a Universal Hash Family**
+```
+UniversalHash(x, a, b, p, m):
+    return ((a * x + b) mod p) mod m
+```
+where:
+- `p` is a prime number `> U`
+- `a, b` are random integers from `[1, p-1]`
+
+✅ **Used in:** **Hash tables, cryptography, data structures**.
 
 ---
 
-## Key Takeaways
-- Randomized algorithms often provide simpler and faster solutions than deterministic ones for certain problems.
-- The randomness can lead to trade-offs between performance and reliability.
-- Understanding the types and applications of randomized algorithms helps in choosing the right approach for a given problem.
+## **6. Chernoff Bounds**
+### **Definition**
+- **Chernoff Bounds** provide a way to bound the probability that a sum of independent random variables deviates significantly from its expectation.
+
+### **Chernoff Bound for Coin Tosses**
+- If `X` is the sum of `n` independent {0,1} variables with expectation `μ`, then:
+  ```
+  P(X ≥ (1+δ)μ) ≤ e^(-δ²μ/3)  for 0 ≤ δ ≤ 1
+  ```
+
+### **Applications**
+- **Randomized algorithms**
+- **Load balancing**
+- **Network analysis**
+
+---
+
+## **7. Load Balancing (Randomized)**
+### **Definition**
+- **Distribute `n` tasks across `m` machines** to balance the load.
+
+### **Randomized Load Balancing Algorithm**
+```
+RandomizedLoadBalancing(jobs, machines):
+    for each job:
+        Assign to a random machine
+    return max load on any machine
+```
+✅ **Expected max load:** `O(log log m / log m)`
+
+### **Applications**
+- **Parallel computing**
+- **Distributed systems**
+
+---
+
+## **8. Summary Table**
+| **Concept** | **Definition** | **Example Algorithm** |
+|-------------|---------------|----------------------|
+| **Contention Resolution** | Avoiding conflicts in resource allocation | Randomized Backoff |
+| **Global Min Cut** | Finding smallest cut in a graph | Karger’s Algorithm |
+| **Linearity of Expectation** | Expected value is additive | Expected empty bins in hashing |
+| **MAX 3-SAT** | Maximizing satisfied clauses | Randomized Assignment |
+| **Universal Hashing** | Reducing hash collisions | `(ax + b) mod p` |
+| **Chernoff Bounds** | Bounding deviation probability | Tail bound for coin tosses |
+| **Load Balancing** | Distributing tasks randomly | Assign to random machine |
+
+---
+
+## **9. Practice Problems**
+1. Implement **Karger’s Min Cut Algorithm**.
+2. Simulate **randomized contention resolution** for network requests.
+3. Prove **linearity of expectation** for summing random variables.
+4. Solve **MAX 3-SAT** using a randomized algorithm.
+5. Implement **universal hashing** for a dictionary.
+6. Use **Chernoff Bounds** to analyze **randomized load balancing**.
+
+---
+
+## **10. References**
+- 📖 **Randomized Algorithms – Motwani & Raghavan**
+- 📖 **Probability and Computing – Mitzenmacher & Upfal**
+- 📖 **Introduction to Algorithms – Cormen et al.**
+- 🔗 [Chernoff Bounds (Wikipedia)](https://en.wikipedia.org/wiki/Chernoff_bound)

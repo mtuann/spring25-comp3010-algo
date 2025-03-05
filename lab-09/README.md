@@ -1,176 +1,156 @@
-# Lab 09: Advanced Dynamic Programming
+# Dynamic Programming II: Subset Sums, Knapsacks, and Sequence Alignment
 
-## Overview
-Building on the basics of dynamic programming, this lab focuses on advanced concepts, techniques, and problem-solving strategies. These include multi-dimensional DP, state optimization, and solving complex problems such as matrix chain multiplication, shortest paths in weighted graphs, and more.
-
----
-
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand advanced DP techniques like multi-dimensional DP and state optimization.
-2. Solve complex DP problems that require creative state representation and transitions.
-3. Analyze and optimize time and space complexity for advanced DP problems.
+This document covers advanced **Dynamic Programming (DP)** problems: **Subset Sum, Knapsack, and Sequence Alignment**, including problem formulations, recurrence relations, pseudocode, and real-world applications.
 
 ---
 
-## Lab Outline
+## **1. Subset Sum Problem**
+### **Problem Statement**
+Given a set of `n` positive integers and a target sum `S`, determine if there is a subset whose sum equals `S`.
 
-### 1. **Advanced DP Concepts**
-- **Multi-dimensional DP**: Representing states with multiple parameters.
-- **State Optimization**: Reducing space complexity by reusing state values.
-- **Iterative vs Recursive**: Comparing approaches for complex DP problems.
+### **Key Idea**
+Use DP to check **if a subset sum can be formed using the first `i` elements**.
 
-### 2. **Problems and Techniques**
-The lab includes problems that demonstrate practical applications of advanced DP techniques.
-
----
-
-## Tasks
-
-### Task 1: Matrix Chain Multiplication
-Given a sequence of matrices, find the minimum number of scalar multiplications needed to multiply them.
-
-#### Problem
-Input: Dimensions of matrices, `p = [1, 2, 3, 4]` (matrix `i` has dimensions `p[i-1] x p[i]`).  
-Output: Minimum scalar multiplications.
-
-#### Implementation
-```python
-def matrix_chain_order(p):
-    n = len(p) - 1
-    dp = [[0] * n for _ in range(n)]
-    for length in range(2, n + 1):
-        for i in range(n - length + 1):
-            j = i + length - 1
-            dp[i][j] = float('inf')
-            for k in range(i, j):
-                cost = dp[i][k] + dp[k + 1][j] + p[i] * p[k + 1] * p[j + 1]
-                dp[i][j] = min(dp[i][j], cost)
-    return dp[0][n - 1]
+### **Recurrence Relation**
 ```
-
----
-
-### Task 2: Longest Increasing Subsequence (LIS)
-Find the length of the longest subsequence in an array such that all elements are sorted in increasing order.
-
-#### Problem
-Input: `nums = [10, 9, 2, 5, 3, 7, 101, 18]`  
-Output: `4` (Subsequence: [2, 3, 7, 101]).
-
-#### Implementation
-```python
-def lis(nums):
-    n = len(nums)
-    dp = [1] * n
-    for i in range(n):
-        for j in range(i):
-            if nums[i] > nums[j]:
-                dp[i] = max(dp[i], dp[j] + 1)
-    return max(dp)
+dp[i][s] = True  if s == 0  (empty subset)
+dp[i][s] = dp[i-1][s] OR dp[i-1][s - A[i]]   if A[i] ≤ s
+dp[i][s] = dp[i-1][s]   otherwise
 ```
+- **Include `A[i]`** → Check `dp[i-1][s - A[i]]`.
+- **Exclude `A[i]`** → Check `dp[i-1][s]`.
 
----
-
-### Task 3: Edit Distance (Levenshtein Distance)
-Calculate the minimum number of operations (insertions, deletions, replacements) required to convert one string to another.
-
-#### Problem
-Input: `word1 = "kitten", word2 = "sitting"`  
-Output: `3` (kitten → sitten → sittin → sitting).
-
-#### Implementation
-```python
-def edit_distance(word1, word2):
-    m, n = len(word1), len(word2)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    for i in range(m + 1):
-        for j in range(n + 1):
-            if i == 0:
-                dp[i][j] = j
-            elif j == 0:
-                dp[i][j] = i
-            elif word1[i - 1] == word2[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
+### **Pseudocode**
+```
+SubsetSum(A, S):
+    n = len(A)
+    dp = [[False] * (S+1) for _ in range(n+1)]
+    
+    for i in range(n+1):
+        dp[i][0] = True
+    
+    for i in range(1, n+1):
+        for s in range(1, S+1):
+            if A[i-1] <= s:
+                dp[i][s] = dp[i-1][s] or dp[i-1][s - A[i-1]]
             else:
-                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+                dp[i][s] = dp[i-1][s]
+    
+    return dp[n][S]
+```
+✅ **O(nS) time complexity**.
+
+### **Applications**
+✔ **Partitioning sets**  
+✔ **Cryptography**  
+✔ **Resource allocation**  
+
+---
+
+## **2. 0/1 Knapsack Problem**
+### **Problem Statement**
+Given `n` items, each with weight `w_i` and value `v_i`, and a knapsack with capacity `W`, find the **maximum value** that can be obtained by selecting items without exceeding `W`.
+
+### **Key Idea**
+Use DP to decide **whether to include each item**.
+
+### **Recurrence Relation**
+```
+dp[i][w] = max( dp[i-1][w], dp[i-1][w - w_i] + v_i )   if w_i ≤ w
+dp[i][w] = dp[i-1][w]   otherwise
+```
+- **Include `i`** → Add `v_i` to `dp[i-1][w - w_i]`.
+- **Exclude `i`** → Keep `dp[i-1][w]`.
+
+### **Pseudocode**
+```
+Knapsack(W, weights, values, n):
+    dp = [[0] * (W+1) for _ in range(n+1)]
+    
+    for i in range(1, n+1):
+        for w in range(1, W+1):
+            if weights[i-1] <= w:
+                dp[i][w] = max(dp[i-1][w], values[i-1] + dp[i-1][w - weights[i-1]])
+            else:
+                dp[i][w] = dp[i-1][w]
+    
+    return dp[n][W]
+```
+✅ **O(nW) time complexity**.
+
+### **Applications**
+✔ **Resource allocation**  
+✔ **Investment decisions**  
+✔ **Network routing optimization**  
+
+---
+
+## **3. Sequence Alignment**
+### **Problem Statement**
+Given two strings `X` and `Y`, find the optimal way to align them **by inserting gaps** such that the **cost is minimized**.
+
+### **Key Idea**
+Use DP to compute the **minimum cost of transforming X into Y**.
+
+### **Cost Model**
+1. **Match** → No cost if `X[i] == Y[j]`.
+2. **Mismatch** → Cost `M` if `X[i] ≠ Y[j]`.
+3. **Insertion/Deletion (Gap)** → Cost `G`.
+
+### **Recurrence Relation**
+```
+dp[i][j] = min( 
+    dp[i-1][j-1] + mismatchCost(X[i], Y[j]),   # Match/Mismatch
+    dp[i-1][j] + G,   # Deletion (gap in Y)
+    dp[i][j-1] + G    # Insertion (gap in X)
+)
+```
+
+### **Pseudocode**
+```
+SequenceAlignment(X, Y, M, G):
+    m, n = len(X), len(Y)
+    dp = [[0] * (n+1) for _ in range(m+1)]
+    
+    for i in range(m+1):
+        dp[i][0] = i * G
+    for j in range(n+1):
+        dp[0][j] = j * G
+    
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            match = dp[i-1][j-1] + (0 if X[i-1] == Y[j-1] else M)
+            insert = dp[i][j-1] + G
+            delete = dp[i-1][j] + G
+            dp[i][j] = min(match, insert, delete)
+    
     return dp[m][n]
 ```
+✅ **O(mn) time complexity**.
+
+### **Applications**
+✔ **DNA sequence comparison**  
+✔ **Plagiarism detection**  
+✔ **Speech recognition**  
 
 ---
 
-### Task 4: Subset Sum with Count
-Find the number of subsets of a given array that sum up to a target.
-
-#### Problem
-Input: `nums = [1, 2, 3], target = 4`  
-Output: `2` (Subsets: [1, 3] and [4]).
-
-#### Implementation
-```python
-def subset_sum_count(nums, target):
-    dp = [0] * (target + 1)
-    dp[0] = 1
-    for num in nums:
-        for t in range(target, num - 1, -1):
-            dp[t] += dp[t - num]
-    return dp[target]
-```
+## **Summary Table**
+| **Problem** | **Recurrence Relation** | **Time Complexity** |
+|-------------|-------------------------|---------------------|
+| **Subset Sum** | `dp[i][s] = dp[i-1][s] OR dp[i-1][s - A[i]]` | O(nS) |
+| **0/1 Knapsack** | `dp[i][w] = max(dp[i-1][w], v_i + dp[i-1][w - w_i])` | O(nW) |
+| **Sequence Alignment** | `dp[i][j] = min(dp[i-1][j-1] + mismatchCost, dp[i-1][j] + G, dp[i][j-1] + G)` | O(mn) |
 
 ---
 
-### Task 5: Minimum Path Sum in a Grid
-Find the minimum path sum to reach the bottom-right corner of a grid from the top-left corner.
-
-#### Problem
-Input: 
-```
-grid = [
-    [1, 3, 1],
-    [1, 5, 1],
-    [4, 2, 1]
-]
-```
-Output: `7` (Path: 1 → 3 → 1 → 1 → 1).
-
-#### Implementation
-```python
-def min_path_sum(grid):
-    m, n = len(grid), len(grid[0])
-    dp = [[0] * n for _ in range(m)]
-    dp[0][0] = grid[0][0]
-    for i in range(1, m):
-        dp[i][0] = dp[i - 1][0] + grid[i][0]
-    for j in range(1, n):
-        dp[0][j] = dp[0][j - 1] + grid[0][j]
-    for i in range(1, m):
-        for j in range(1, n):
-            dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j]
-    return dp[m - 1][n - 1]
-```
+## **Practice Problems**
+1. Implement **Subset Sum** and modify it to find **all possible subsets**.
+2. Implement **Knapsack Problem** and find the **items included in the optimal solution**.
+3. Modify **Sequence Alignment** to return the **aligned strings**.
 
 ---
 
-## Bonus Task: Traveling Salesman Problem (TSP)
-Solve the TSP using DP with bit masking.
-
-#### Problem
-Input: A graph represented as a distance matrix.  
-Output: Minimum cost of visiting all cities and returning to the starting city.
-
-#### Hint
-Use a bitmask to represent the visited cities and a DP table `dp[mask][i]` to store the cost of visiting all cities in `mask` ending at city `i`.
-
----
-
-## Submission Instructions
-1. Save your solutions in `advanced_dynamic_programming.py`.
-2. Include comments explaining the logic behind each solution.
-3. Submit the file via Canvas before the deadline.
-
----
-
-## Additional Resources
-- [TopCoder: Advanced Dynamic Programming](https://www.topcoder.com/community/competitive-programming)
-- [GeeksforGeeks: Advanced DP Problems](https://www.geeksforgeeks.org)
-- [LeetCode: Hard DP Problems](https://leetcode.com/tag/dynamic-programming/)
+## **References**
+- 📖 **Introduction to Algorithms – CLRS**.
+- 📖 **Algorithm Design – Jon Kleinberg & Éva Tardos**.

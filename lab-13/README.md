@@ -1,231 +1,233 @@
-# Lab 13: Approximation and Local Search
+# Approximation Algorithms and Local Search: Load Balancing, Center Selection, Pricing Method, LP Rounding, Knapsack Problem; Local Search, Metropolis Algorithm, Hopfield Neural Network, Maximum Cut
 
-## Overview
-In this lab, we explore **approximation algorithms** and **local search techniques** for tackling computationally hard problems (NP-hard problems). These methods provide near-optimal solutions in reasonable time, even when finding exact solutions is computationally infeasible.
-
-You will:
-1. Learn the fundamentals of approximation algorithms.
-2. Understand how local search works for optimization problems.
-3. Implement practical algorithms to solve common NP-hard problems using approximation and local search techniques.
+This document provides a structured overview of key topics in **optimization, approximation algorithms, and heuristic methods**. Each section includes definitions, examples, pseudocode, and applications.
 
 ---
 
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the principles of approximation algorithms and their use in solving NP-hard problems.
-2. Learn about approximation ratios and analyze the performance of approximation algorithms.
-3. Implement local search techniques for solving optimization problems.
-4. Compare and analyze the trade-offs between approximation, local search, and exact algorithms.
+## **1. Load Balancing**
+### **Definition**
+- The **Load Balancing Problem** involves distributing computational tasks across multiple processors to minimize the **maximum load**.
+- Given `m` machines and `n` jobs with processing times `p1, p2, ..., pn`, assign jobs to machines **minimizing** the maximum load.
 
----
-
-## Lab Outline
-
-### 1. **Introduction to Approximation Algorithms**
-- **What are approximation algorithms?**
-  - Algorithms that find solutions close to the optimal with a guaranteed performance bound.
-- **Key Concepts:**
-  - Approximation ratio.
-  - Polynomial-time solvability.
-
-### 2. **Local Search Techniques**
-- **What is local search?**
-  - An iterative optimization technique that explores neighboring solutions.
-- **Applications:**
-  - Suitable for combinatorial optimization problems like TSP, Vertex Cover, and Max-Cut.
-- **Key Features:**
-  - Starting from an initial solution.
-  - Exploring neighborhoods and improving iteratively.
-
----
-
-## Tasks
-
-### Task 1: Approximation for Vertex Cover
-#### Objective
-Implement a **2-approximation algorithm** for the Vertex Cover problem.
-
-#### Problem
-Input: A graph $G(V, E)$.  
-Output: A vertex cover $C$ such that $|C| \leq 2 \times |C^*|$, where $C^*$ is the optimal solution.
-
-#### Algorithm
-1. Initialize the vertex cover $C$ as an empty set.
-2. While there are uncovered edges:
-   - Pick an edge $(u, v)$ from $E$.
-   - Add both $u$ and $v$ to $C$.
-   - Remove all edges incident to $u$ and $v$.
-
-#### Implementation
-```python
-def vertex_cover_approximation(graph):
-    """
-    2-Approximation algorithm for Vertex Cover.
-    Args:
-        graph: Adjacency list representation of the graph.
-    Returns:
-        A set representing the vertex cover.
-    """
-    cover = set()
-    edges = set((u, v) for u in graph for v in graph[u])
-    
-    while edges:
-        u, v = edges.pop()
-        cover.update([u, v])
-        edges = {e for e in edges if u not in e and v not in e}
-    
-    return cover
-
-# Example usage
-graph = {
-    0: [1, 2],
-    1: [0, 2],
-    2: [0, 1, 3],
-    3: [2]
-}
-print(vertex_cover_approximation(graph))
+### **Greedy Algorithm for Load Balancing**
+**Pseudocode (List Scheduling Algorithm)**:
 ```
-
----
-
-### Task 2: Traveling Salesperson Problem (TSP) - Nearest Neighbor Heuristic
-#### Objective
-Solve TSP using the **Nearest Neighbor Heuristic**.
-
-#### Problem
-Input: A weighted graph representing distances between cities.  
-Output: An approximate tour that visits all cities and returns to the start.
-
-#### Algorithm
-1. Start at any city.
-2. Move to the nearest unvisited city.
-3. Repeat until all cities are visited.
-4. Return to the starting city.
-
-#### Implementation
-```python
-def tsp_nearest_neighbor(graph, start):
-    """
-    Nearest Neighbor Heuristic for TSP.
-    Args:
-        graph: Dictionary representing the weighted graph.
-        start: Starting node.
-    Returns:
-        The tour and its cost.
-    """
-    n = len(graph)
-    visited = {start}
-    tour = [start]
-    current = start
-    total_cost = 0
-    
-    while len(visited) < n:
-        next_city = min(
-            (city for city in graph[current] if city not in visited),
-            key=lambda city: graph[current][city]
-        )
-        total_cost += graph[current][next_city]
-        visited.add(next_city)
-        tour.append(next_city)
-        current = next_city
-    
-    # Return to the start
-    total_cost += graph[current][start]
-    tour.append(start)
-    return tour, total_cost
-
-# Example usage
-graph = {
-    0: {1: 10, 2: 15, 3: 20},
-    1: {0: 10, 2: 35, 3: 25},
-    2: {0: 15, 1: 35, 3: 30},
-    3: {0: 20, 1: 25, 2: 30}
-}
-print(tsp_nearest_neighbor(graph, 0))
+LoadBalancing(jobs, machines):
+    Initialize an empty list for each machine
+    for each job in sorted(jobs, descending order):
+        Assign job to machine with the least load
+    return maximum load across all machines
 ```
+✅ **Time Complexity:** O(n log n)  
+
+### **Applications**
+- **Parallel computing:** Distributing tasks across processors.
+- **Network traffic management:** Balancing requests across servers.
 
 ---
 
-### Task 3: Local Search for Max-Cut Problem
-#### Objective
-Optimize the Max-Cut problem using a local search algorithm.
+## **2. Center Selection**
+### **Definition**
+- Given a set of points in a metric space, choose `k` centers to **minimize the maximum distance** of any point to its nearest center.
+- Special case: **k-Center Problem** (NP-hard).
 
-#### Problem
-Input: A graph $G(V, E)$.  
-Output: A partition of $V$ into two sets $S$ and $T$ such that the number of edges between $S$ and $T$ is maximized.
-
-#### Algorithm
-1. Start with a random partition of vertices.
-2. Iteratively move vertices between sets $S$ and $T$ to improve the cut value.
-3. Stop when no single move improves the cut.
-
-#### Implementation
-```python
-import random
-
-def max_cut_local_search(graph):
-    """
-    Local Search for Max-Cut Problem.
-    Args:
-        graph: Adjacency list of the graph.
-    Returns:
-        The sets S and T and the cut size.
-    """
-    vertices = list(graph.keys())
-    random.shuffle(vertices)
-    S, T = set(vertices[:len(vertices)//2]), set(vertices[len(vertices)//2:])
-    
-    def cut_size():
-        return sum(1 for u in S for v in T if v in graph[u])
-    
-    improved = True
-    while improved:
-        improved = False
-        for v in list(S) + list(T):
-            if v in S:
-                new_S, new_T = S - {v}, T | {v}
-            else:
-                new_S, new_T = S | {v}, T - {v}
-            
-            new_cut_size = sum(1 for u in new_S for v in new_T if v in graph[u])
-            if new_cut_size > cut_size():
-                S, T = new_S, new_T
-                improved = True
-    
-    return S, T, cut_size()
-
-# Example usage
-graph = {
-    0: [1, 2],
-    1: [0, 2, 3],
-    2: [0, 1],
-    3: [1]
-}
-print(max_cut_local_search(graph))
+### **Greedy Approximation Algorithm**
+**Pseudocode:**
 ```
+GreedyCenterSelection(points, k):
+    Choose an arbitrary point as the first center
+    for i = 2 to k:
+        Select the farthest point from the chosen centers
+    return selected centers
+```
+✅ **Approximation Factor:** `2`
+
+### **Applications**
+- **Facility location:** Placing warehouses for optimized delivery.
+- **Data clustering:** k-Means initialization.
 
 ---
 
-## Additional Exercises
-1. Implement a 3-approximation algorithm for the Set Cover problem.
-2. Use simulated annealing to solve TSP.
-3. Explore the trade-offs between brute force and approximation techniques for Knapsack.
+## **3. Pricing Method**
+### **Definition**
+- **Pricing algorithms** determine **optimal prices** for items based on demand and constraints.
+- Used in **auctions, airline ticket pricing, and online ads**.
+
+### **Simple Demand-Based Pricing Algorithm**
+```
+DynamicPricing(demand, base_price):
+    if demand is high:
+        increase price
+    else if demand is low:
+        decrease price
+    return new_price
+```
+✅ **Time Complexity:** O(1) per update.
+
+### **Applications**
+- **Airline ticket pricing**
+- **E-commerce dynamic pricing**
+- **Advertising auctions**
 
 ---
 
-## Submission Instructions
-1. Submit the following files:
-   - `vertex_cover.py`: Implementation of the Vertex Cover approximation.
-   - `tsp_heuristic.py`: Nearest Neighbor Heuristic for TSP.
-   - `max_cut_local_search.py`: Local search for Max-Cut.
-2. Include a report (`report.pdf`) discussing:
-   - Approximation ratios achieved.
-   - Performance analysis of local search vs. exact algorithms.
-3. Submit via Canvas by the due date.
+## **4. LP Rounding**
+### **Definition**
+- **Linear Programming (LP) rounding** is used in **approximation algorithms**.
+- Solve an **LP relaxation** of an **integer programming problem**, then round fractional values.
+
+### **LP Relaxation Example: Vertex Cover**
+#### **LP Formulation**
+```
+Minimize: ∑ x_v   (sum over all vertices)
+Subject to: x_u + x_v ≥ 1 for every edge (u, v)
+           0 ≤ x_v ≤ 1
+```
+#### **LP Rounding Algorithm**
+```
+LP_Rounding():
+    Solve the LP relaxation optimally
+    Round all x_v ≥ 0.5 to 1
+    Return the rounded solution as the vertex cover
+```
+✅ **Approximation Factor:** `2`
+
+### **Applications**
+- **Approximate solutions for NP-hard problems**
+- **Network design optimization**
 
 ---
 
-## Additional Resources
-- [Approximation Algorithms (GeeksforGeeks)](https://www.geeksforgeeks.org/approximation-algorithms/)
-- [Local Search Methods](https://en.wikipedia.org/wiki/Local_search_(optimization))
-- [TSP Approximation](https://www.math.uwaterloo.ca/~bico/papers/tsp.pdf)
+## **5. Knapsack Problem**
+### **Definition**
+- Given `n` items with **values** `v[i]` and **weights** `w[i]`, and a knapsack of capacity `W`, maximize:
+```
+Maximize ∑ v[i] * x[i]
+Subject to ∑ w[i] * x[i] ≤ W
+```
+- **0/1 Knapsack:** Items are either taken or not (`x[i] ∈ {0,1}`).
+- **Fractional Knapsack:** Items can be split (`x[i] ∈ [0,1]`).
+
+### **Greedy Algorithm for Fractional Knapsack**
+```
+FractionalKnapsack(items, W):
+    Sort items by value/weight ratio in descending order
+    for each item:
+        if item fits, take full item
+        else take fraction
+    return total value
+```
+✅ **Time Complexity:** O(n log n)  
+
+---
+
+## **6. Local Search**
+### **Definition**
+- Iteratively improves a solution by making **local modifications**.
+- Used in **combinatorial optimization**.
+
+### **Example: Local Search for Traveling Salesman**
+```
+LocalSearch(Tour):
+    while there exists an improving swap:
+        swap two edges to reduce tour cost
+    return optimized tour
+```
+✅ **Used in:** Scheduling, routing, clustering.
+
+---
+
+## **7. Metropolis Algorithm**
+### **Definition**
+- **Simulated annealing** variant that **accepts worse solutions with a probability**.
+- Helps escape **local minima**.
+
+### **Algorithm**
+```
+MetropolisAlgorithm(initial_solution, T):
+    while not converged:
+        new_solution = small_random_change(current_solution)
+        if new_solution is better:
+            accept
+        else accept with probability exp(-ΔE/T)
+        Reduce temperature T
+    return best solution
+```
+✅ **Used in:** Optimization, physics simulations.
+
+---
+
+## **8. Hopfield Neural Network**
+### **Definition**
+- **Recurrent artificial neural network** used for **associative memory and optimization**.
+
+### **Energy Function**
+```
+E = -1/2 * ∑ Wij * Si * Sj - ∑ θi * Si
+```
+- `S`: State of neurons.
+- `W`: Weights between neurons.
+
+### **Hopfield Network Algorithm**
+```
+HopfieldNetwork(weights, inputs):
+    Initialize neurons randomly
+    while state changes:
+        Update neurons based on weight connections
+    return final stable state
+```
+✅ **Used in:** Image recognition, memory retrieval.
+
+---
+
+## **9. Maximum Cut**
+### **Definition**
+- Given a graph `G = (V, E)`, partition `V` into two subsets **maximizing the number of edges between them**.
+
+### **Greedy Approximation Algorithm**
+```
+MaxCut(G):
+    Assign each node to a random partition
+    for each node:
+        if moving the node increases the cut:
+            move it
+    return partition
+```
+✅ **Approximation Factor:** `2`
+
+### **Applications**
+- **Network partitioning**
+- **VLSI design**
+- **Image segmentation**
+
+---
+
+## **10. Summary Table**
+| **Concept** | **Definition** | **Example Algorithm** |
+|-------------|---------------|----------------------|
+| **Load Balancing** | Distributing tasks to minimize max load | Greedy Assignment |
+| **Center Selection** | Choosing `k` centers to minimize max distance | Greedy Selection |
+| **Pricing Method** | Adjusting prices dynamically | Demand-based Pricing |
+| **LP Rounding** | Solving LP relaxations & rounding | Vertex Cover Approximation |
+| **Knapsack Problem** | Selecting items to maximize value | Greedy (Fractional) |
+| **Local Search** | Iterative solution improvement | 2-Opt for TSP |
+| **Metropolis Algorithm** | Simulated annealing variant | Energy-based acceptance |
+| **Hopfield Neural Network** | Recurrent NN for optimization | Associative Memory |
+| **Maximum Cut** | Partitioning a graph to maximize cut edges | Randomized Approximation |
+
+---
+
+## **11. Practice Problems**
+1. Implement **Greedy Load Balancing** for `n` jobs.
+2. Solve the **Knapsack Problem** using **Dynamic Programming**.
+3. Implement the **Metropolis Algorithm** for TSP.
+4. Apply **Hopfield Networks** for pattern recognition.
+5. Implement an **approximation algorithm for Maximum Cut**.
+
+---
+
+## **12. References**
+- 📖 **Algorithm Design – Kleinberg & Tardos**.
+- 📖 **Approximation Algorithms – Vazirani**.
+- 📖 **Neural Networks – Haykin**.
+- 🔗 [Metropolis Algorithm](https://en.wikipedia.org/wiki/Metropolis_algorithm).

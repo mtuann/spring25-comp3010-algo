@@ -1,173 +1,141 @@
-# Lab 10: Network Flow Algorithms
+# Max-Flow Problem, Ford-Fulkerson Algorithm, Maximum Flows, and Minimum Cuts
 
-## Overview
-This lab introduces network flow algorithms, focusing on problems involving maximum flow, minimum cut, and their applications. You will explore the fundamentals of flow networks, residual graphs, and augmenting paths, and implement classical algorithms such as Ford-Fulkerson and Edmonds-Karp.
-
----
-
-## Learning Objectives
-By the end of this lab, you will:
-1. Understand the concepts of flow networks, residual graphs, and augmenting paths.
-2. Implement the Ford-Fulkerson and Edmonds-Karp algorithms for solving the maximum flow problem.
-3. Apply network flow concepts to real-world problems such as bipartite matching and circulation.
-4. Analyze the time complexity of network flow algorithms.
+This document covers **maximum flow problems**, including **Ford-Fulkerson Algorithm**, and explores the **Max-Flow Min-Cut Theorem**. We discuss problem formulations, recurrence relations, pseudocode, and real-world applications.
 
 ---
 
-## Lab Outline
+## **1. The Maximum Flow Problem**
+### **Problem Statement**
+Given a directed graph `G = (V, E)`, where:
+- Each edge `(u, v)` has a **capacity** `c(u, v)`.
+- There is a **source** `s` and a **sink** `t`.
+- The goal is to determine the **maximum amount of flow** that can be pushed from `s` to `t` without violating the edge capacities.
 
-### 1. **Introduction to Network Flow**
-- **Flow Network**: A directed graph where each edge has a capacity, and each flow must respect capacity constraints.
-- **Residual Graph**: Tracks the remaining capacities after a flow is sent.
-- **Augmenting Path**: A path from the source to the sink that can accommodate more flow.
-
-### 2. **Key Algorithms**
-- **Ford-Fulkerson Method**: Uses augmenting paths to increase flow iteratively.
-- **Edmonds-Karp Algorithm**: An implementation of Ford-Fulkerson using BFS to find augmenting paths (ensures polynomial time).
+### **Flow Constraints**
+1. **Capacity Constraint**: Flow on an edge cannot exceed its capacity:
+   ```
+   0 ≤ f(u, v) ≤ c(u, v)
+   ```
+2. **Flow Conservation**: For every vertex except `s` and `t`, incoming flow must equal outgoing flow:
+   ```
+   ∑ f(v, u) = ∑ f(u, w)  for all u ∈ V \ {s, t}
+   ```
+3. **Skew Symmetry**: Flow in one direction negates flow in the reverse direction:
+   ```
+   f(u, v) = -f(v, u)
+   ```
 
 ---
 
-## Tasks
+## **2. Ford-Fulkerson Algorithm**
+### **Key Idea**
+The algorithm repeatedly finds an **augmenting path** from `s` to `t` in the **residual graph**, increasing the flow along the path until no more augmenting paths exist.
 
-### Task 1: Maximum Flow using Ford-Fulkerson
-Find the maximum flow in a given flow network using the Ford-Fulkerson algorithm.
+### **Steps**
+1. Start with `f(u, v) = 0` for all edges.
+2. While there is an **augmenting path** in the residual graph:
+   - Find the **minimum residual capacity** along the path.
+   - Augment the flow along the path.
+   - Update the residual graph.
+3. When no augmenting path exists, the current flow is the **maximum flow**.
 
-#### Problem
-Input: A flow network represented as an adjacency matrix or list, with capacities for each edge.  
-Output: The maximum flow from source `s` to sink `t`.
+### **Pseudocode**
+```
+FordFulkerson(G, s, t):
+    Initialize flow f(u, v) = 0 for all edges
+    While there exists an augmenting path P in residual graph G_f:
+        Find bottleneck capacity: Δ = min {c_f(u, v) | (u, v) ∈ P}
+        Augment flow along P by Δ
+        Update residual capacities: c_f(u, v) -= Δ, c_f(v, u) += Δ
+    Return max flow value
+```
+✅ **Time Complexity**:
+- **O(E * max flow value)** (for DFS-based search).
+- **O(VE²)** (for BFS-based Edmonds-Karp variant).
 
-#### Implementation
-```python
-from collections import defaultdict
+---
 
-class Graph:
-    def __init__(self, vertices):
-        self.graph = defaultdict(list)
-        self.capacity = {}
-        self.V = vertices
+## **3. Residual Graph and Augmenting Paths**
+The **residual graph** `G_f` contains:
+- Forward edges with remaining capacity.
+- Backward edges representing the flow that can be reduced.
 
-    def add_edge(self, u, v, cap):
-        self.graph[u].append(v)
-        self.graph[v].append(u)
-        self.capacity[(u, v)] = cap
-        self.capacity[(v, u)] = 0  # Reverse edge has 0 capacity initially
+An **augmenting path** is a path from `s` to `t` in `G_f` where all edges have positive residual capacity.
 
-    def bfs(self, s, t, parent):
-        visited = [False] * self.V
-        queue = [s]
-        visited[s] = True
+**Example of Residual Graph Update**
+```
+Original Graph:
+s → (5) → A → (10) → t
+s → (5) → B → (5) → t
 
-        while queue:
-            u = queue.pop(0)
-            for v in self.graph[u]:
-                if not visited[v] and self.capacity[(u, v)] > 0:
-                    queue.append(v)
-                    visited[v] = True
-                    parent[v] = u
-                    if v == t:
-                        return True
-        return False
-
-    def ford_fulkerson(self, source, sink):
-        parent = [-1] * self.V
-        max_flow = 0
-
-        while self.bfs(source, sink, parent):
-            path_flow = float('Inf')
-            v = sink
-            while v != source:
-                u = parent[v]
-                path_flow = min(path_flow, self.capacity[(u, v)])
-                v = parent[v]
-
-            v = sink
-            while v != source:
-                u = parent[v]
-                self.capacity[(u, v)] -= path_flow
-                self.capacity[(v, u)] += path_flow
-                v = parent[v]
-
-            max_flow += path_flow
-
-        return max_flow
+After augmenting `s → A → t` with flow = 5:
+Residual Graph:
+s ← (5) ← A  (Back edge added)
+A → (5) → t  (Capacity reduced)
 ```
 
 ---
 
-### Task 2: Maximum Flow using Edmonds-Karp
-Solve the maximum flow problem using the Edmonds-Karp algorithm (BFS-based Ford-Fulkerson).
-
-#### Implementation
-Modify the BFS implementation in the Ford-Fulkerson method to use a queue-based approach. Ensure that BFS finds the shortest augmenting path.
-
----
-
-### Task 3: Bipartite Graph Matching
-Use network flow to find the maximum bipartite matching in a given bipartite graph.
-
-#### Problem
-Input: A bipartite graph where vertices are divided into two disjoint sets.  
-Output: The maximum number of matching pairs.
-
-#### Implementation Hint
-Transform the bipartite graph into a flow network:
-1. Add a source node connected to all vertices in set `A` with capacity 1.
-2. Add a sink node connected to all vertices in set `B` with capacity 1.
-3. Add edges between `A` and `B` as per the bipartite graph structure with capacity 1.
-
----
-
-### Task 4: Minimum Cut in a Flow Network
-Find the edges that form the minimum cut in a flow network after computing the maximum flow.
-
-#### Problem
-Output: The set of edges whose removal disconnects the source from the sink.
-
-#### Implementation Hint
-Use the residual graph after finding the maximum flow to identify reachable and non-reachable nodes from the source.
-
----
-
-### Bonus Task: Circulation Problem
-Determine whether a circulation with demands exists in a network.
-
-#### Problem
-Input: A graph with edge capacities and vertex demands.  
-Output: Whether a feasible circulation exists.
-
-#### Implementation Hint
-Add a super-source and super-sink, and transform the problem into a maximum flow problem.
-
----
-
-## Code Template
-```python
-# Create a flow network
-g = Graph(6)  # Example: 6 vertices
-g.add_edge(0, 1, 16)
-g.add_edge(0, 2, 13)
-g.add_edge(1, 2, 10)
-g.add_edge(1, 3, 12)
-g.add_edge(2, 4, 14)
-g.add_edge(3, 2, 9)
-g.add_edge(3, 5, 20)
-g.add_edge(4, 3, 7)
-g.add_edge(4, 5, 4)
-
-source, sink = 0, 5
-print(f"Maximum Flow: {g.ford_fulkerson(source, sink)}")
+## **4. Maximum Flows and Minimum Cuts**
+### **Max-Flow Min-Cut Theorem**
+The **maximum flow** in a network is equal to the **minimum cut capacity**, where a **minimum cut** `(S, T)` is a partition of `V` such that:
 ```
+Capacity(S, T) = ∑ c(u, v) for all edges (u, v) where u ∈ S, v ∈ T
+```
+### **Finding the Minimum Cut**
+1. Run **Ford-Fulkerson** to find `max-flow`.
+2. Construct the **residual graph**.
+3. Perform a **BFS/DFS from `s`** in the residual graph to identify **reachable vertices** (`S`).
+4. **Cut edges** are edges from `S` to `T`.
 
 ---
 
-## Submission Instructions
-1. Save your solutions in a file named `network_flow_algorithms.py`.
-2. Ensure the file is well-commented and includes explanations for your code.
-3. Submit your work via Canvas by the deadline.
+## **5. Edmonds-Karp Algorithm**
+### **Key Idea**
+- Uses **BFS** instead of DFS to find **shortest augmenting paths**.
+- Guarantees **O(VE²) complexity**.
+
+### **Pseudocode**
+```
+EdmondsKarp(G, s, t):
+    Initialize flow f(u, v) = 0 for all edges
+    While BFS(G_f, s, t) finds an augmenting path P:
+        Find bottleneck capacity: Δ = min {c_f(u, v) | (u, v) ∈ P}
+        Augment flow along P by Δ
+        Update residual capacities
+    Return max flow value
+```
+✅ **O(VE²) time complexity**.
 
 ---
 
-## Additional Resources
-- [Ford-Fulkerson Algorithm Explanation](https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/)
-- [Edmonds-Karp Algorithm](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
-- [Bipartite Matching with Network Flow](https://www.topcoder.com/community/competitive-programming/tutorials/maximum-bipartite-matching/)
+## **6. Applications of Max-Flow**
+✔ **Network Routing** – Maximize data flow in networks.  
+✔ **Bipartite Matching** – Assign tasks to workers optimally.  
+✔ **Circulation Problems** – Model traffic, logistics, and supply chains.  
+✔ **Image Segmentation** – Used in **computer vision**.  
+
+---
+
+## **Summary Table**
+| **Concept** | **Explanation** | **Time Complexity** |
+|------------|----------------|---------------------|
+| **Max-Flow Problem** | Find the maximum flow in a network from `s` to `t` | – |
+| **Ford-Fulkerson** | Finds augmenting paths and updates residual graph | O(E * max flow) |
+| **Residual Graph** | Tracks remaining capacities and possible augmenting paths | – |
+| **Min-Cut Theorem** | Max flow equals the minimum cut capacity | – |
+| **Edmonds-Karp** | BFS-based Ford-Fulkerson | O(VE²) |
+
+---
+
+## **Practice Problems**
+1. Implement **Ford-Fulkerson Algorithm** for a directed graph.
+2. Find the **minimum cut** in a flow network using residual graphs.
+3. Modify **Edmonds-Karp** to handle undirected graphs.
+
+---
+
+## **References**
+- 📖 **Introduction to Algorithms – CLRS**.
+- 📖 **Algorithm Design – Jon Kleinberg & Éva Tardos**.
+- 🔗 [Max-Flow Visualization](https://www.cs.usfca.edu/~galles/visualization/Flow.html).
