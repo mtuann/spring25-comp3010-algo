@@ -176,21 +176,6 @@ h(x) = (ax + b) mod p mod m
 
 ---
 
-## **14. The Stable Matching Problem**
-### **Problem**
-- Given `n` men and `n` women with preferences, find a **stable matching** (no blocking pairs).
-
-### **Gale-Shapley Algorithm**
-```
-While unmatched men exist:
-    Pick an unmatched man m
-    Propose to highest-ranked woman w
-    If w prefers m over current partner, w switches
-```
-✅ **Guarantees a stable matching in `O(n^2)`**.
-
----
-
 ## **15. Final Exam Practice Problems**
 1. **Implement weighted interval scheduling using DP**.
 2. **Solve the max-flow problem on a given network**.
@@ -208,7 +193,6 @@ While unmatched men exist:
 | **Max-Flow** | Ford-Fulkerson | Network Routing |
 | **NP-Completeness** | 3-SAT, Reduction Proofs | Complexity Theory |
 | **Approximation** | Load Balancing, LP Rounding | Resource Allocation |
-| **Stable Matching** | Gale-Shapley | Marriage Matching, HR Systems |
 
 ---
 

@@ -137,23 +137,24 @@ Build tree:
 ```
         (100)
        /      \
-     (45)    (55)
+     F(45)    (55)
            /       \
-         (25)      (30)
+         (30)      (25)
         /    \     /    \
-      (12)  (13) (14)   (16)
-     /   \       /   \
-   A(5)  B(9)  C(12) D(13)
+      (14)  E(16) C(12) D(13)
+     /   \       
+   A(5)  B(9)  
 ```
 Generated **Huffman codes**:
 ```
-A -> 1100
-B -> 1101
-C -> 100
-D -> 101
-E -> 00
-F -> 01
+A -> 1000
+B -> 1001
+C -> 110
+D -> 111
+E -> 101
+F -> 0
 ```
+- [Huffman coding step-by-step example](https://www.youtube.com/watch?v=iEm1NRyEe5c).
 
 ### **Time Complexity**
 - **O(n log n) using heaps**.
